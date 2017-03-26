@@ -1,5 +1,6 @@
 import sys
 import ConfigParser
+import time
 
 import pygame
 from pygame.constants import (
@@ -16,6 +17,13 @@ from pygame.constants import (
 from types.hidden.client import Client
 from types.hidden.world import World
 from verb import verbs
+
+spawned_functions = []
+
+
+def spawn(seconds, method):
+    spawned_functions.append([time.time() + seconds, method])
+
 
 client = Client()
 world = World()
@@ -71,6 +79,13 @@ class PyBYOND(object):
         pygame.display.set_caption('PyBomberman')
 
         while True:
+            now_time = time.time()
+            for spawned_function in list(spawned_functions):
+                run_time, function = spawned_function
+                if now_time >= run_time:
+                    spawned_functions.remove(spawned_function)
+                    function()
+
             player.moving()
             player.move()
             for y in xrange(map_height):

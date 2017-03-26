@@ -12,10 +12,13 @@ class Bomb(Object):
     icon = 'resources/bomb.png'
     icon_state = ''
     density = True
-    # def __init__(self):
-    #     pass
 
+    def __init__(self, **kwargs):
+        super(Bomb, self).__init__(**kwargs)
+        spawn(5, self.explode)   # opcjonalny 3ci argument dodac z parametrami
 
+    def explode(self):
+        print self, 'explodes'
 
 
 Turf.icon = 'resources/map.png'

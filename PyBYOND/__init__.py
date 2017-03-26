@@ -23,6 +23,7 @@ from .internals import (
     pyBYOND,
     world,
     client,
+    spawn,
 )
 
 from verb import verb
