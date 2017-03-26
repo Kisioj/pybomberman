@@ -24,6 +24,17 @@ from .internals import (
     world,
     client,
     spawn,
+    delete,
+    get_step,
+)
+
+from .constants import (
+    NORTH,
+    SOUTH,
+    WEST,
+    EAST,
 )
 
 from verb import verb
+
+

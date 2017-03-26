@@ -17,12 +17,31 @@ from pygame.constants import (
 from types.hidden.client import Client
 from types.hidden.world import World
 from verb import verbs
+import constants
 
 spawned_functions = []
 
 
 def spawn(seconds, method):
     spawned_functions.append([time.time() + seconds, method])
+
+
+def get_step(ref, direction):
+    x, y = ref.x, ref.y
+    result = None
+    if direction == constants.NORTH:
+        result = world_map[y + 1][x]
+    elif direction == constants.SOUTH:
+        result = world_map[y - 1][x]
+    elif direction == constants.WEST:
+        result = world_map[y][x - 1]
+    elif direction == constants.EAST:
+        result = world_map[y][x + 1]
+    return list(result)
+
+
+def delete(atom):
+    atom.__remove__()
 
 
 client = Client()
@@ -82,7 +101,9 @@ class PyBYOND(object):
             now_time = time.time()
             for spawned_function in list(spawned_functions):
                 run_time, function = spawned_function
-                if now_time >= run_time:
+                if function.__self__.deleted:
+                    spawned_functions.remove(spawned_function)
+                elif now_time >= run_time:
                     spawned_functions.remove(spawned_function)
                     function()
 

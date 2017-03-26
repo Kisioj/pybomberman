@@ -40,6 +40,12 @@ class Atom(object):
         self._time_diff = 0
         self.x, self.y = 0, 0
         self._screen_x, self._screen_y = 0, 0
+        self.deleted = False
+
+    def __remove__(self):
+        assert self in internals.world_map[self.y][self.x]
+        internals.world_map[self.y][self.x].remove(self)
+        self.deleted = True
 
     def draw(self):
         self._screen_x = self.x * internals.tile_width

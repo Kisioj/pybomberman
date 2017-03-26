@@ -1,4 +1,5 @@
 from PyBYOND import *
+from PyBYOND import internals
 
 
 class Box(Object):
@@ -15,10 +16,35 @@ class Bomb(Object):
 
     def __init__(self, **kwargs):
         super(Bomb, self).__init__(**kwargs)
-        spawn(5, self.explode)   # opcjonalny 3ci argument dodac z parametrami
+        spawn(3, self.explode)   # opcjonalny 3ci argument dodac z parametrami
 
     def explode(self):
         print self, 'explodes'
+        delete(self)
+        for obj in get_step(self, NORTH):
+            if isinstance(obj, Box):
+                delete(obj)
+            elif isinstance(obj, Bomb):
+                obj.explode()
+
+        for obj in get_step(self, SOUTH):
+            if isinstance(obj, Box):
+                delete(obj)
+            elif isinstance(obj, Bomb):
+                obj.explode()
+
+        for obj in get_step(self, WEST):
+            if isinstance(obj, Box):
+                delete(obj)
+            elif isinstance(obj, Bomb):
+                obj.explode()
+
+        for obj in get_step(self, EAST):
+            if isinstance(obj, Box):
+                delete(obj)
+            elif isinstance(obj, Bomb):
+                obj.explode()
+
 
 
 Turf.icon = 'resources/map.png'

@@ -12,9 +12,9 @@ class Player(Mob):
         # b = Bomb()
         # b.x, b.y = 10, 10
 
-        b = mappable.Bomb()
-        b.x, b.y = 220, 220
-        internals.world_map[12][10].append(b)
+        # b = mappable.Bomb()
+        # b.x, b.y = 220, 220
+        # internals.world_map[12][10].append(b)
 
     def __logout__(self):
         pass
