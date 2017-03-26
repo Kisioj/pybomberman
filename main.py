@@ -1,23 +1,5 @@
 from PyBYOND import *
-
-
-class Box(Object):
-    def __init__(self, *args, **kwargs):
-        super(Box, self).__init__(*args, **kwargs)
-
-class Bomb(Object):
-    # icon = 'resources/bomb.png'
-    # icon_state = ""
-
-# class Wall1(Object):
-#     icon = 'resources/map.png'
-#     icon_state = "wall1"
-#
-
-    def __init__(self, *args, **kwargs):
-        super(Bomb, self).__init__(*args, **kwargs)
-
-
+import mappable
 
 
 class Player(Mob):

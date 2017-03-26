@@ -67,12 +67,16 @@ class Icon(object):
 class IconDescriptor(object):
     def __set__(self, src, filename):
         # print 'src', src, 'filename', filename
-        src.__dict__['icon'] = icons.setdefault(filename, Icon(filename))
-        src.__dict__['icon_state'] = src.__dict__['icon'].icon_states.get(src.icon_state, '')
+        if filename not in icons:
+            icons[filename] = Icon(filename)
+        src._icon = icons[filename]
+        src._icon_state = src._icon.icon_states.get(src.icon_state, '')
 
     def __get__(self, src, cls):
         # print 'src', src, 'cls', cls
-        icon = src.__dict__.get('icon')
-        if icon:
+        # if issubclass(cls, type):
+        #     return self
+        icon = src._icon
+        if src._icon:
             icon = icon.filename
         return icon

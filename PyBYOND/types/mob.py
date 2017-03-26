@@ -98,7 +98,7 @@ class Mob(Atom):
             self._moving = False
 
     def draw(self):
-        animation_only_while_moving = self.__dict__['icon_state'].attr_movement
+        animation_only_while_moving = self._icon_state.attr_movement
         should_progress_animation = True
         if animation_only_while_moving and not self._moving:
             should_progress_animation = False
@@ -112,7 +112,7 @@ class Mob(Atom):
             if self._time_diff > 200:
                 self._time_diff %= 100
                 self._frame_no += 1
-                self._frame_no %= self.__dict__['icon_state'].attr_frames
+                self._frame_no %= self._icon_state.attr_frames
         else:
             self._frame_no = 0
 
@@ -121,8 +121,8 @@ class Mob(Atom):
         # time_diff_millis = int(round(time_diff * 1000))
         # print 'time_diff_millis', time_diff_millis
 
-        if self.__dict__.get('icon'):
-            icon_state = self.__dict__['icon_state']
+        if self.icon:
+            icon_state = self._icon_state
             # screen.blit(icon_state.frames[self.dir][self._frame_no], (self.x, self.y))
 
             y = internals.map_height - self.y

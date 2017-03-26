@@ -36,17 +36,13 @@ class IconStateDescriptor(object):
     def __set__(self, src, state_name):
         # print 'src', src, 'state_name', state_name
 
-        icon = src.__dict__.get('icon')
-        if icon:
-            src.__dict__['icon_state'] = icon.icon_states[state_name]
-        else:
-            src.__dict__['icon_state'] = state_name
+        if src._icon:
+            src._icon_state = src._icon.icon_states[state_name]
+
 
     def __get__(self, src, cls):
         # print 'src', src, 'cls', cls
-
-        icon = src.__dict__.get('icon')
-        icon_state = src.__dict__.get('icon_state', '')
-        if icon and icon_state:
-            icon_state = icon_state.name
-        return icon_state
+        if isinstance(src._icon_state, IconState):
+            return src._icon_state.name
+        else:
+            return src._icon_state

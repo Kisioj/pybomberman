@@ -49,6 +49,7 @@ world_map = None
 map_width = None
 map_height = None
 
+
 class PyBYOND(object):
     def run(self):
         self._load_map()
@@ -82,23 +83,19 @@ class PyBYOND(object):
             pygame.display.update()
             fpsClock.tick(FPS)
 
-    def _get_atom_data(self, atom_type):
-        result = dict(self.fields_data[atom_type])
-        for key, value in result.iteritems():
-            # key, value = line.split(' = ')
-            key_type = map_object_attribute_types.get(key)
-            if key_type:
-                result[key] = key_type(value)
-        return result
-
     def _load_map(self):
+        # def _process_atom_data(atom_data):
+        #     for key, value in atom_data.iteritems():
+        #         key_type = map_object_attribute_types.get(key)
+        #         if key_type:
+        #             atom_data[key] = key_type(value)
+
         global world_map, map_width, map_height
         config = ConfigParser.ConfigParser()
         config.read('map.ini')
         raw_map = config.get('level', 'map').split('\n')
         map_width, map_height = len(raw_map[0]), len(raw_map)
 
-        self.fields_data = {}
         world_map = []
         for y in xrange(map_height):
             row = []
@@ -115,14 +112,8 @@ class PyBYOND(object):
                     cell_conent = [cell_conent]
 
                 for atom_type in cell_conent:
-                    if atom_type not in self.fields_data:
-                        attrs = {}
-                        for attr in config.options(atom_type):
-                            attrs[attr] = config.get(atom_type, attr)
-                            self.fields_data[atom_type] = attrs
-
-                    atom_data = self._get_atom_data(atom_type)
-                    atom_class = mappable_types[atom_data.pop('type')]
+                    atom_class, atom_data = mappable_types[atom_type]
+                    # _process_atom_data(atom_data)
                     atom = atom_class(**atom_data)
                     atom.x, atom.y = x*32, y*32
                     cell.append(atom)
