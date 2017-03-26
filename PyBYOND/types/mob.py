@@ -32,6 +32,7 @@ class Mob(Atom):
         self.x, self.y = 0, 0
         self._moving = False
         self.pixel_x, self.pixel_y = 0, 0
+        self.client = None
 
         self._screen_x, self._screen_y = 0, 0
         print 'trolo'
@@ -47,7 +48,7 @@ class Mob(Atom):
             x, y = self.x, self.y
             step_size = 4
             to_screen_x = x * internals.tile_width
-            to_screen_y = (internals.map_height - y) * internals.tile_width
+            to_screen_y = (internals.map_height - y) * internals.tile_height
             if self._screen_x < to_screen_x:
                 self._screen_x += step_size
             elif self._screen_x > to_screen_x:

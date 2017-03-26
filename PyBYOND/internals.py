@@ -13,8 +13,11 @@ from pygame.constants import (
     K_ESCAPE,
 )
 
+from types.hidden.client import Client
 from types.hidden.world import World
+from verb import verbs
 
+client = Client()
 world = World()
 SCREEN_WIDTH, SCREEN_HEIGHT = 400*2, 368*2
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -42,6 +45,7 @@ map_object_attribute_types = {
 icons = {}
 mappable_types = {}
 
+
 FPS = 30
 tile_width, tile_height = 32, 32
 
@@ -52,9 +56,13 @@ map_height = None
 
 class PyBYOND(object):
     def run(self):
+        print 'verbs', verbs.items()
         self._load_map()
 
         player = world.mob()
+        player.client = client
+        client.mob = player
+
         player.__login__()
 
         pygame.init()
@@ -72,6 +80,8 @@ class PyBYOND(object):
 
             player.draw()
             for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    client.__keydown__(event.key)
                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                     pygame.quit()
                     sys.exit()
@@ -96,15 +106,16 @@ class PyBYOND(object):
         raw_map = config.get('level', 'map').split('\n')
         map_width, map_height = len(raw_map[0]), len(raw_map)
 
-        world_map = []
+        world_map = [[[] for _ in xrange(map_width)] for _ in xrange(map_height)]
         for y in xrange(map_height):
-            row = []
-            world_map.append(row)
+            # row = []
+            # world_map.append(row)
             for x in xrange(map_width):
-                cell = []
-                row.append(cell)
+                # cell = []
+                # row.append(cell)
+                cell = world_map[y][x]
 
-                symbol = raw_map[y][x]
+                symbol = raw_map[map_height - y - 1][x]
                 cell_conent = config.get('level', symbol)
                 if ', ' in cell_conent:
                     cell_conent = cell_conent.split(', ')
@@ -115,7 +126,7 @@ class PyBYOND(object):
                     atom_class, atom_data = mappable_types[atom_type]
                     # _process_atom_data(atom_data)
                     atom = atom_class(**atom_data)
-                    atom.x, atom.y = x*32, y*32
+                    atom.x, atom.y = x, y
                     cell.append(atom)
                     # print atom_data
 

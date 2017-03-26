@@ -39,8 +39,12 @@ class Atom(object):
         self._last_time = time.time()
         self._time_diff = 0
         self.x, self.y = 0, 0
+        self._screen_x, self._screen_y = 0, 0
 
     def draw(self):
+        self._screen_x = self.x * internals.tile_width
+        self._screen_y = (internals.map_height - self.y) * internals.tile_height
+
         now_time = time.time()
         self._time_diff += int(round((now_time - self._last_time) * 1000))
         self._last_time = now_time
@@ -52,13 +56,18 @@ class Atom(object):
 
         if self.icon:
             icon_state = self._icon_state
+            current_frame = icon_state.frames[self._dir_index][self._frame_no]
+            rect = current_frame.get_rect()
             # screen.blit(icon_state.frames[self.dir][self._frame_no], (self.x, self.y))
 
             internals.screen.blit(
                 pygame.transform.scale(
-                    icon_state.frames[self._dir_index][self._frame_no], (32, 32)
+                    current_frame, (32, 32)
                 ),
-                (self.x, self.y)
+                (
+                    self._screen_x,
+                    self._screen_y-rect.height*2
+                )
             )
 
     @classmethod

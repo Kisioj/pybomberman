@@ -11,14 +11,12 @@ class Box(Object):
 class Bomb(Object):
     icon = 'resources/bomb.png'
     icon_state = ''
+    density = True
+    # def __init__(self):
+    #     pass
 
-# print Box.icon
-# print Box.icon_state
-# print Box._icon
-# print Box._icon_state
-# # b = Box()
-# print b.icon
-# print b.icon_state
+
+
 
 Turf.icon = 'resources/map.png'
 print Turf.icon

@@ -1,5 +1,6 @@
 from PyBYOND import *
 import mappable
+from PyBYOND import internals
 
 
 class Player(Mob):
@@ -11,12 +12,31 @@ class Player(Mob):
         # b = Bomb()
         # b.x, b.y = 10, 10
 
+        b = mappable.Bomb()
+        b.x, b.y = 220, 220
+        internals.world_map[12][10].append(b)
+
     def __logout__(self):
         pass
 
 
+@verb
+def drop_bomb(usr):
+    print usr, 'dropped the bomb'
+    b = mappable.Bomb()
+    b.x, b.y = usr.x, usr.y
+    internals.world_map[usr.y][usr.x].append(b)
+
+    # usr.play('Drop.wav')
+    # b = Bomb()
+    # b.loc = usr.x, usr.y, usr.z
+    # b.range = usr.range
+    # b.owner = usr
+
 world.mob = Player
+client.controls[K_LCTRL] = drop_bomb
 pyBYOND.run()
+
 
 # manage.py
 # 1 uruchamianie servera
