@@ -19,6 +19,7 @@ from ..constants import (
     WEST_INDEX,
 )
 from .. import internals
+from ..internals import world
 from .atom import Atom
 
 
@@ -47,8 +48,8 @@ class Mob(Atom):
         if self._moving:
             x, y = self.x, self.y
             step_size = 4
-            to_screen_x = x * internals.tile_width
-            to_screen_y = (internals.map_height - y) * internals.tile_height
+            to_screen_x = x * world.icon_size
+            to_screen_y = (world.map.height - y) * world.icon_size
             if self._screen_x < to_screen_x:
                 self._screen_x += step_size
             elif self._screen_x > to_screen_x:
@@ -66,29 +67,29 @@ class Mob(Atom):
         if self._moving:
             return
 
-        wmap = internals.world_map
+        world_map = world.map.fields
 
         x, y = self.x, self.y
 
         if internals.keyboard[K_UP]:
             self.dir = NORTH
             self._dir_index = NORTH_INDEX
-            if True not in (obj.density for obj in wmap[y+1][x]):
+            if True not in (obj.density for obj in world_map[y+1][x]):
                 y += 1
         elif internals.keyboard[K_DOWN]:
             self.dir = SOUTH
             self._dir_index = SOUTH_INDEX
-            if True not in (obj.density for obj in wmap[y - 1][x]):
+            if True not in (obj.density for obj in world_map[y - 1][x]):
                 y -= 1
         elif internals.keyboard[K_LEFT]:
             self.dir = WEST
             self._dir_index = WEST_INDEX
-            if True not in (obj.density for obj in wmap[y][x-1]):
+            if True not in (obj.density for obj in world_map[y][x-1]):
                 x -= 1
         elif internals.keyboard[K_RIGHT]:
             self.dir = EAST
             self._dir_index = EAST_INDEX
-            if True not in (obj.density for obj in wmap[y][x + 1]):
+            if True not in (obj.density for obj in world_map[y][x + 1]):
                 x += 1
 
         if (self.x, self.y) != (x, y):
@@ -126,7 +127,7 @@ class Mob(Atom):
             icon_state = self._icon_state
             # screen.blit(icon_state.frames[self.dir][self._frame_no], (self.x, self.y))
 
-            y = internals.map_height - self.y
+            y = world.icon_size - self.y
 
             current_frame = icon_state.frames[self._dir_index][self._frame_no]
             rect = current_frame.get_rect()

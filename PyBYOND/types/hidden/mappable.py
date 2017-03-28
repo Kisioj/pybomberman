@@ -1,6 +1,7 @@
 from ... import internals
 from .icon import IconDescriptor
 from .icon_state import IconStateDescriptor
+from .world_map import WorldMap
 
 
 class MappableMeta(type):
@@ -67,4 +68,4 @@ class MappableMeta(type):
         # setattr(cls, 'icon', IconDescriptor())
         dct['x'] = 12
         super(MappableMeta, cls).__init__(name, bases, dct)
-        internals.mappable_types[name] = cls, {}
+        WorldMap.mappable_types[name] = cls, {}

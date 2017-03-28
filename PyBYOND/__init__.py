@@ -16,7 +16,6 @@ from .internals import (
     keyboard,
     screen,
     FPS,
-    mappable_types,
     world_map,
     map_height,
     map_width,

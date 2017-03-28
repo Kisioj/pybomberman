@@ -1,6 +1,6 @@
 from PyBYOND import *
 import mappable
-from PyBYOND import internals
+from PyBYOND import internals, world
 
 
 class Player(Mob):
@@ -25,7 +25,7 @@ def drop_bomb(usr):
     print usr, 'dropped the bomb'
     b = mappable.Bomb()
     b.x, b.y = usr.x, usr.y
-    internals.world_map[usr.y][usr.x].append(b)
+    world.map.fields[usr.y][usr.x].append(b)
 
     # usr.play('Drop.wav')
     # b = Bomb()

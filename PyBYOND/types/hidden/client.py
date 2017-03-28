@@ -6,7 +6,7 @@ class Client(object):
         self.controls = {}
 
     def __keydown__(self, key):
-        print 'Client.__kedown__', key, verbs.items()
+        # print 'Client.__kedown__', key, verbs.items()
         if key in self.controls:
             self.controls[key](self.mob)
 

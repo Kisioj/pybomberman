@@ -5,10 +5,13 @@ import pygame
 
 from .. import constants
 from .. import internals
+from ..internals import world
 
 from .hidden.icon import IconDescriptor
 from .hidden.icon_state import IconStateDescriptor
 from .hidden.mappable import MappableMeta
+from .hidden.world_map import WorldMap
+
 
 dir_to_dir_index_map = {
     constants.SOUTH: constants.SOUTH_INDEX,
@@ -43,13 +46,13 @@ class Atom(object):
         self.deleted = False
 
     def __remove__(self):
-        assert self in internals.world_map[self.y][self.x]
-        internals.world_map[self.y][self.x].remove(self)
+        assert self in world.map.fields[self.y][self.x]
+        world.map.fields[self.y][self.x].remove(self)
         self.deleted = True
 
     def draw(self):
-        self._screen_x = self.x * internals.tile_width
-        self._screen_y = (internals.map_height - self.y) * internals.tile_height
+        self._screen_x = self.x * world.icon_size
+        self._screen_y = (world.map.height - self.y) * world.icon_size
 
         now_time = time.time()
         self._time_diff += int(round((now_time - self._last_time) * 1000))
@@ -81,7 +84,7 @@ class Atom(object):
         name = kwargs.get('name')
         if not name:
             raise AttributeError('name attribute cannot be empty')
-        elif name in internals.mappable_types:
+        elif name in WorldMap.mappable_types:
             raise AttributeError("'{}' mappable type is already registered".format(name))
 
         icon = kwargs.get('icon', cls.icon)
@@ -97,4 +100,4 @@ class Atom(object):
             'density': kwargs.get('density'),
             'dir': kwargs.get('dir'),
         }
-        internals.mappable_types[name] = cls, attributes
+        WorldMap.mappable_types[name] = cls, attributes

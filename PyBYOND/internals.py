@@ -16,6 +16,7 @@ from pygame.constants import (
 
 from types.hidden.client import Client
 from types.hidden.world import World
+from types.hidden.world_map import WorldMap
 from verb import verbs
 import constants
 
@@ -27,17 +28,7 @@ def spawn(seconds, method):
 
 
 def get_step(ref, direction):
-    x, y = ref.x, ref.y
-    result = None
-    if direction == constants.NORTH:
-        result = world_map[y + 1][x]
-    elif direction == constants.SOUTH:
-        result = world_map[y - 1][x]
-    elif direction == constants.WEST:
-        result = world_map[y][x - 1]
-    elif direction == constants.EAST:
-        result = world_map[y][x + 1]
-    return list(result)
+    return world.map.get_step(ref, direction)
 
 
 def delete(atom):
@@ -70,12 +61,9 @@ map_object_attribute_types = {
 }
 
 icons = {}
-mappable_types = {}
 
 
 FPS = 30
-tile_width, tile_height = 32, 32
-
 world_map = None
 map_width = None
 map_height = None
@@ -109,10 +97,7 @@ class PyBYOND(object):
 
             player.moving()
             player.move()
-            for y in xrange(map_height):
-                for x in xrange(map_width):
-                    for atom in world_map[y][x]:
-                        atom.draw()
+            world.map.__draw__()
 
             player.draw()
             for event in pygame.event.get():
@@ -130,59 +115,8 @@ class PyBYOND(object):
             fpsClock.tick(FPS)
 
     def _load_map(self):
-        # def _process_atom_data(atom_data):
-        #     for key, value in atom_data.iteritems():
-        #         key_type = map_object_attribute_types.get(key)
-        #         if key_type:
-        #             atom_data[key] = key_type(value)
-
-        global world_map, map_width, map_height
-        config = ConfigParser.ConfigParser()
-        config.read('map.ini')
-        raw_map = config.get('level', 'map').split('\n')
-        map_width, map_height = len(raw_map[0]), len(raw_map)
-
-        world_map = [[[] for _ in xrange(map_width)] for _ in xrange(map_height)]
-        for y in xrange(map_height):
-            # row = []
-            # world_map.append(row)
-            for x in xrange(map_width):
-                # cell = []
-                # row.append(cell)
-                cell = world_map[y][x]
-
-                symbol = raw_map[map_height - y - 1][x]
-                cell_conent = config.get('level', symbol)
-                if ', ' in cell_conent:
-                    cell_conent = cell_conent.split(', ')
-                else:
-                    cell_conent = [cell_conent]
-
-                for atom_type in cell_conent:
-                    atom_class, atom_data = mappable_types[atom_type]
-                    # _process_atom_data(atom_data)
-                    atom = atom_class(**atom_data)
-                    atom.x, atom.y = x, y
-                    cell.append(atom)
-                    # print atom_data
-
-                # print cell_conent
-
-        # print self.fields_data
-        # print 'map_width, map_height', map_width, map_height
-        map_width, map_height = len(world_map[0]), len(world_map)
-
+        global world
+        world.map = WorldMap('map.ini')
 
 pyBYOND = PyBYOND()
-
-# map_tiles = load_tiles('resources/map.png', 16, 16)
-# print len(map_tiles), map_tiles
-
-
-# icon = Icon('resources/player.png')
-# print icon.icon_states
-# im2 = Image.open('resources/map.png')
-# print 'info', im2.info  # http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
-
-
 
