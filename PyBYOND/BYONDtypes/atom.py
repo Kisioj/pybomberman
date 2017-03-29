@@ -9,7 +9,7 @@ from ..internals import world
 
 from .hidden.icon import IconDescriptor
 from .hidden.icon_state import IconStateDescriptor
-from .hidden.mappable import MappableMeta
+from .hidden.mappable_meta import MappableMeta
 from .hidden.world_map import WorldMap
 
 
@@ -20,6 +20,7 @@ dir_to_dir_index_map = {
     constants.EAST: constants.EAST_INDEX,
 }
 
+
 class Atom(object):
     __metaclass__ = MappableMeta
     _icon = ''
@@ -28,27 +29,34 @@ class Atom(object):
     icon_state = IconStateDescriptor()
     x = 0
     y = 0
-    def __init__(self, **kwargs):
-        dct = dict(self.__class__.__dict__)
-        dct.update(self.__dict__)
+    density = False
+    dir = constants.SOUTH
+    pixel_x = 0
+    pixel_y = 0
 
-        self.name = kwargs.get('name', dct.get('name'))
-        self.icon = kwargs.get('icon', self.icon)
-        self.icon_state = kwargs.get('icon_state', self.icon_state)
-        self.density = kwargs.get('density', dct.get('density', False))
-        self.dir = kwargs.get('dir', dct.get('dir')) or constants.SOUTH
-        self._dir_index = dir_to_dir_index_map[self.dir]
-        self._frame_no = 0
+    _dir_index = constants.SOUTH_INDEX
+    _frame_no = 0
+    _time_diff = 0
+    _deleted = False
+
+    def __init__(self, x=None, y=None):
         self._last_time = time.time()
-        self._time_diff = 0
-        self.x, self.y = 0, 0
-        self._screen_x, self._screen_y = 0, 0
-        self.deleted = False
+        if x is not None:
+            self.x = x
+        if y is not None:
+            self.y = y
+        self._screen_x = self.x * world.icon_size
+        self._screen_y = (world.map.height - self.y) * world.icon_size
+        world.map.fields[self.y][self.x].append(self)
 
     def __remove__(self):
         assert self in world.map.fields[self.y][self.x]
         world.map.fields[self.y][self.x].remove(self)
-        self.deleted = True
+        self._deleted = True
+
+    @property
+    def loc(self):
+        return world.map.locate(self.x, self.y)
 
     def draw(self):
         self._screen_x = self.x * world.icon_size
@@ -78,26 +86,3 @@ class Atom(object):
                     self._screen_y-rect.height*2
                 )
             )
-
-    @classmethod
-    def create(cls, **kwargs):
-        name = kwargs.get('name')
-        if not name:
-            raise AttributeError('name attribute cannot be empty')
-        elif name in WorldMap.mappable_types:
-            raise AttributeError("'{}' mappable type is already registered".format(name))
-
-        icon = kwargs.get('icon', cls.icon)
-        if not icon:
-            raise AttributeError('icon attribute cannot be empty')
-        elif not os.path.isfile(icon):
-            raise AttributeError("Could not find file: '{}'".format(icon))
-
-        attributes = {
-            'name': name,
-            'icon': icon,
-            'icon_state': kwargs.get('icon_state', name),
-            'density': kwargs.get('density'),
-            'dir': kwargs.get('dir'),
-        }
-        WorldMap.mappable_types[name] = cls, attributes

@@ -7,10 +7,10 @@ from pygame.constants import (
 )
 
 
-from .types.atom import Atom
-from .types.turf import Turf
-from .types.object import Object
-from .types.mob import Mob
+from .BYONDtypes.atom import Atom
+from .BYONDtypes.turf import Turf
+from .BYONDtypes.object import Object
+from .BYONDtypes.mob import Mob
 
 from .internals import (
     keyboard,
@@ -23,8 +23,10 @@ from .internals import (
     world,
     client,
     spawn,
+    # sleep,
     delete,
     get_step,
+    BYONDtypes,
 )
 
 from .constants import (

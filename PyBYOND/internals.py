@@ -14,13 +14,15 @@ from pygame.constants import (
     K_ESCAPE,
 )
 
-from types.hidden.client import Client
-from types.hidden.world import World
-from types.hidden.world_map import WorldMap
+from BYONDtypes.hidden.client import Client
+from BYONDtypes.hidden.world import World
+from BYONDtypes.hidden.world_map import WorldMap
 from verb import verbs
 import constants
 
 spawned_functions = []
+
+
 
 
 def spawn(seconds, method):
@@ -59,6 +61,7 @@ icon_key_types = {
 map_object_attribute_types = {
     'density': lambda density: density == 'True'
 }
+BYONDtypes = WorldMap.types
 
 icons = {}
 
@@ -69,10 +72,13 @@ map_width = None
 map_height = None
 
 
+import types
+
+
 class PyBYOND(object):
     def run(self):
         print 'verbs', verbs.items()
-        self._load_map()
+        WorldMap(world, 'map.ini')
 
         player = world.mob()
         player.client = client
@@ -89,11 +95,18 @@ class PyBYOND(object):
             now_time = time.time()
             for spawned_function in list(spawned_functions):
                 run_time, function = spawned_function
-                if function.__self__.deleted:
+
+                if hasattr(function, '__self__') and function.__self__._deleted:
                     spawned_functions.remove(spawned_function)
                 elif now_time >= run_time:
                     spawned_functions.remove(spawned_function)
-                    function()
+                    if isinstance(function, types.GeneratorType):
+                        try:
+                            next(function)
+                        except StopIteration:
+                            pass
+                    else:
+                        function()
 
             player.moving()
             player.move()
@@ -113,10 +126,6 @@ class PyBYOND(object):
 
             pygame.display.update()
             fpsClock.tick(FPS)
-
-    def _load_map(self):
-        global world
-        world.map = WorldMap('map.ini')
 
 pyBYOND = PyBYOND()
 

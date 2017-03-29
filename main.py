@@ -1,37 +1,34 @@
+# moze po prostu dac intrukcje, ze nalezy zrobic plik main.py gdzi beda importowane wszystkie moduly, ktore chcemy zeby sie wykonaly
+
 from PyBYOND import *
-import mappable
+import mappable  # bez tej linijki wywali, moze by trzeba bylo zrobic jakies manage.py do uruchamiania, zeby moduly nie musialy sie importowac?
 from PyBYOND import internals, world
 
 
 class Player(Mob):
-    def __login__(self):
-        self.icon = 'resources/player.png'
-        self.icon_state = ''
-        self.x, self.y = 3, 2
-        self.pixel_x = -16
-        # b = Bomb()
-        # b.x, b.y = 10, 10
+    icon = 'resources/player.png'
+    icon_state = ''
+    pixel_x = -16
+    x, y = 3, 2     # x, y i z tez zrobic jako deskryptory najlepiej i jezeli np  ustawisz x na 0 to wszystko idzie na 0
+    range = 1
 
-        # b = mappable.Bomb()
-        # b.x, b.y = 220, 220
-        # internals.world_map[12][10].append(b)
+    def __login__(self):
+        print self, 'has logged in'
 
     def __logout__(self):
+        print self, 'has logged out'
+
+    def __move__(self):
         pass
 
 
 @verb
 def drop_bomb(usr):
     print usr, 'dropped the bomb'
-    b = mappable.Bomb()
-    b.x, b.y = usr.x, usr.y
-    world.map.fields[usr.y][usr.x].append(b)
-
-    # usr.play('Drop.wav')
-    # b = Bomb()
-    # b.loc = usr.x, usr.y, usr.z
-    # b.range = usr.range
-    # b.owner = usr
+    bomb = mappable.Bomb(usr.x, usr.y)  # lepiej chyba loc=usr.loc lub loc=locate(usr.x, usr.y)
+    bomb.range = usr.range
+    bomb.owner = usr
+    usr.client.play('Drop.wav')
 
 world.mob = Player
 client.controls[K_LCTRL] = drop_bomb

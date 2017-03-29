@@ -13,3 +13,5 @@ class Client(object):
     def __keyup__(self, key):
         pass
 
+    def play(self, filename):
+        print filename, 'plays'

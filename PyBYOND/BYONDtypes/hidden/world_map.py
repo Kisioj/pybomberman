@@ -18,10 +18,27 @@ from ... import constants
 #         return [] # powinnismy zwrocic moby i obiekty
 
 
-class WorldMap(object):
-    mappable_types = {}
+class MappableTypesRegister(object):
+    types = {}
 
-    def __init__(self, filename):
+    def __getitem__(self, type_name):
+        return self.types[type_name]
+
+    def __getattr__(self, type_name):
+        return self.__getitem__(type_name)
+
+    def add(self, cls):
+        MappableTypesRegister.types[cls.__name__] = cls
+
+    def __iter__(self):
+        return self.types.iterkeys()
+
+
+class WorldMap(object):
+    types = MappableTypesRegister()
+
+    def __init__(self, world, filename):
+        world.map = self
         config = ConfigParser.ConfigParser()
         config.read(filename)
         raw_map = config.get('level', 'map').split('\n')
@@ -40,8 +57,7 @@ class WorldMap(object):
                     cell_conent = [cell_conent]
 
                 for atom_type in cell_conent:
-                    atom_class, atom_data = WorldMap.mappable_types[atom_type]
-                    atom = atom_class(**atom_data)
+                    atom = WorldMap.types[atom_type]()
                     atom.x, atom.y = x, y
                     cell.append(atom)
 
@@ -64,5 +80,5 @@ class WorldMap(object):
             result = self.fields[y][x + 1]
         return list(result)
 
-    def locate(self, x, y, z):  # probably should also give possibility to pass class Turf argument here, z
-        pass
+    def locate(self, x, y, z=1):  # probably should also give possibility to pass class Turf argument here, z
+        return self.fields[y][x]
