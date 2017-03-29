@@ -5,14 +5,22 @@ import types
 # byteplay.Code.from_code(obj.explode.im_func.func_code)
 import inspect
 
+
 def sleepy(func):
     def outer(self):
-        # def inner(result):
+        def inner():
+            try:
+                seconds = next(result)
+                spawn(seconds, inner)
+            except StopIteration:
+                print 'STOP'
+                pass
 
         result = func(self)
         if isinstance(result, types.GeneratorType):
-            seconds = next(result)
-            spawn(seconds, result)
+            inner()
+            # seconds = next(result)
+            # spawn(seconds, result)
         # print result,
         return result
     return outer
