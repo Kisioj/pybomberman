@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 
 import pygame
@@ -51,6 +52,8 @@ class Atom(object):
         self._screen_y = (world.map.height - self.y) * world.icon_size
         world.map.fields[self.y][self.x].append(self)
 
+        self.dots = 1
+
     def __remove__(self):
         if self not in world.map.fields[self.y][self.x]:
             print self, self.x, self.y, world.map.fields[self.y][self.x]
@@ -67,28 +70,50 @@ class Atom(object):
         self.render()
 
     def animate(self):
-        frames_count = self._icon_state._frames_count
+        icon_state = self._icon_state
+        frames_count = icon_state._frames_count
         if frames_count > 1:
             is_animation_on = True
-            movement_animation = self._icon_state.attr_movement
+            movement_animation = icon_state.attr_movement
             if movement_animation and not self._moving:
                 is_animation_on = False
 
             if is_animation_on:
                 now_time = world.time
-                self._time_diff += int(round((now_time - self._last_time) * 1000))
+                self._time_diff += now_time - self._last_time
+                last_time_diff = self._time_diff
                 self._last_time = now_time
-                if self._time_diff > 200:
-                    self._time_diff %= 100
-                    self._frame_no += 1
-                    self._frame_no %= self._icon_state._frames_count
+
+                total_delay_in_seconds = icon_state.total_delay / 10.0
+                current_delay_in_seconds = icon_state.delay[self._frame_no] / 10.0
+
+                if self._time_diff > total_delay_in_seconds:
+                    self._time_diff %= total_delay_in_seconds
+                    print 'ROUGH'
+
+                changed_frame = False
+                while self._time_diff > current_delay_in_seconds:
+                     current_delay_in_seconds = icon_state.delay[self._frame_no] / 10.0
+                     self._time_diff -= current_delay_in_seconds
+                     self._frame_no += 1
+                     self._frame_no %= icon_state._frames_count
+                     changed_frame = True
+                if movement_animation and changed_frame:
+                     print 'frame: {}, time_diff: {}, world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds)
             else:
                 self._frame_no = 0
+                self._last_time = world.time
+
+                if movement_animation:
+                    sys.stdout.write('\r' + ((self.dots / 100) + 1) * '.')
+                    self.dots += 1
+                    if self.dots >= 300:
+                        self.dots = 1
+
 
     def render(self):
         if self.icon:
-            icon_state = self._icon_state
-            current_frame = icon_state.frames[self._dir_index][self._frame_no]
+            current_frame = self._icon_state.frames[self._dir_index][self._frame_no]
             rect = current_frame.get_rect()
 
             internals.screen.blit(

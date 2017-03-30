@@ -20,11 +20,13 @@ class Icon(object):
                     pygame.transform.scale(frame, (width, height))
                     for frame in frames
                 ]
-        print 'scale_to'
+        print 'scale', width, height
 
     def load_metadata(self, filename):
         image = Image.open(filename)
         desc = image.info.get('Description')
+        print image.info
+        print 'desc', desc
         image.close()
 
         icon_states_data = []

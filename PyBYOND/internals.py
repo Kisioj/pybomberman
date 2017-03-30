@@ -44,7 +44,7 @@ def sleep(seconds):
     return seconds
 
 def spawn(seconds, method):
-    spawned_functions.append([time.time() + seconds, method])
+    spawned_functions.append([time.time() + seconds/10.0, method])
 
 
 def get_step(ref, direction):
@@ -72,7 +72,7 @@ icon_key_types = {
     'state': str,
     'dirs': int,
     'frames': int,
-    'delay': lambda delay: map(int, delay.split(',')),
+    'delay': lambda delay: [int(x) for x in delay.split(',')],  # delay in 1/10s
     'loop': bool,
 }
 

@@ -17,12 +17,13 @@ class Box(Object):
     def explode(self):
         self.exploding = True
         self.icon_state = "wall1_fired"
-        print '3'
-        yield sleep(0.1)
-        print '2'
-        yield sleep(0.1)
-        print '1'
-        yield sleep(0.1)
+        # print '3'
+        # yield sleep(2)
+        # print '2'
+        # yield sleep(2)
+        # print '1'
+        # yield sleep(3)
+        yield sleep(7)
         delete(self)
 
 
@@ -35,7 +36,7 @@ class Bomb(Object):
     def __init__(self, *args, **kwargs):
         super(Bomb, self).__init__(*args, **kwargs)
         self._icon.scale(32, 32)
-        spawn(3, self.explode)   # opcjonalny 3ci argument dodac z parametrami
+        spawn(30, self.explode)   # opcjonalny 3ci argument dodac z parametrami
 
     def explode(self, explosion_source=None):
         if not explosion_source:

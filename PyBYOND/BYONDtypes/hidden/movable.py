@@ -76,7 +76,7 @@ class Movable(Atom):
             self.x, self.y = x, y
             world_map[self.y][self.x].append(self)
             self._moving = True
-            print x / 32, y / 32 + 1, x, y
+            # print x / 32, y / 32 + 1, x, y
         else:
             self._moving = False
 

@@ -1,3 +1,5 @@
+import time
+
 class IconState(object):
     def __init__(self, icon, start_frame, name, **kwargs):
         self.width = icon.tile_width
@@ -6,8 +8,10 @@ class IconState(object):
 
         self._frames_count = kwargs.get('frames', 1)
         self.attr_dirs = kwargs.get('dirs', 1)
-        self.attr_loop = kwargs.get('loop', False)
-        self.attr_delay = kwargs.get('delay')
+        self.attr_loop = kwargs.get('loop', -1)  # -1 = infinite, how many times loop through animation TODO
+        self.attr_rewind = kwargs.get('rewind', False)  # TODO
+        self.delay = kwargs.get('delay', [])
+        self.total_delay = sum(self.delay)
         self.attr_movement = kwargs.get('movement', False)
         self.total_frames = self.attr_dirs * self._frames_count
 
@@ -38,6 +42,8 @@ class IconStateDescriptor(object):
 
         if src._icon:
             src._icon_state = src._icon.icon_states[state_name]
+            src._frame_no = 0
+            src._last_time = time.time()
 
 
     def __get__(self, src, cls):
