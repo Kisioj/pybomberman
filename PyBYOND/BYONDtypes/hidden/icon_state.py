@@ -4,12 +4,12 @@ class IconState(object):
         self.height = icon.tile_height
         self.name = name
 
-        self.attr_frames = kwargs.get('frames', 1)
+        self._frames_count = kwargs.get('frames', 1)
         self.attr_dirs = kwargs.get('dirs', 1)
         self.attr_loop = kwargs.get('loop', False)
         self.attr_delay = kwargs.get('delay')
         self.attr_movement = kwargs.get('movement', False)
-        self.total_frames = self.attr_dirs * self.attr_frames
+        self.total_frames = self.attr_dirs * self._frames_count
 
         frames_to_start = start_frame
         frames_left = self.total_frames

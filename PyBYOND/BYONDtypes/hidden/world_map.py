@@ -57,9 +57,7 @@ class WorldMap(object):
                     cell_conent = [cell_conent]
 
                 for atom_type in cell_conent:
-                    atom = WorldMap.types[atom_type]()
-                    atom.x, atom.y = x, y
-                    cell.append(atom)
+                    WorldMap.types[atom_type](x=x, y=y)
 
     def __draw__(self):
         for y in xrange(self.height):

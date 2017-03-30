@@ -39,6 +39,8 @@ class Atom(object):
     _time_diff = 0
     _deleted = False
 
+    _moving = False  # atoms cannot move but need this object for icon with movable states
+
     def __init__(self, x=None, y=None):
         self._last_time = time.time()
         if x is not None:
@@ -50,6 +52,8 @@ class Atom(object):
         world.map.fields[self.y][self.x].append(self)
 
     def __remove__(self):
+        if self not in world.map.fields[self.y][self.x]:
+            print self, self.x, self.y, world.map.fields[self.y][self.x]
         assert self in world.map.fields[self.y][self.x]
         world.map.fields[self.y][self.x].remove(self)
         self._deleted = True
@@ -59,30 +63,38 @@ class Atom(object):
         return world.map.locate(self.x, self.y)
 
     def draw(self):
-        self._screen_x = self.x * world.icon_size
-        self._screen_y = (world.map.height - self.y) * world.icon_size
+        self.animate()
+        self.render()
 
-        now_time = time.time()
-        self._time_diff += int(round((now_time - self._last_time) * 1000))
-        self._last_time = now_time
+    def animate(self):
+        frames_count = self._icon_state._frames_count
+        if frames_count > 1:
+            is_animation_on = True
+            movement_animation = self._icon_state.attr_movement
+            if movement_animation and not self._moving:
+                is_animation_on = False
 
-        if self._time_diff > 200:
-            self._time_diff %= 100
-            self._frame_no += 1
-            self._frame_no %= self._icon_state.attr_frames
+            if is_animation_on:
+                now_time = world.time
+                self._time_diff += int(round((now_time - self._last_time) * 1000))
+                self._last_time = now_time
+                if self._time_diff > 200:
+                    self._time_diff %= 100
+                    self._frame_no += 1
+                    self._frame_no %= self._icon_state._frames_count
+            else:
+                self._frame_no = 0
 
+    def render(self):
         if self.icon:
             icon_state = self._icon_state
             current_frame = icon_state.frames[self._dir_index][self._frame_no]
             rect = current_frame.get_rect()
-            # screen.blit(icon_state.frames[self.dir][self._frame_no], (self.x, self.y))
 
             internals.screen.blit(
-                pygame.transform.scale(
-                    current_frame, (32, 32)
-                ),
+                current_frame,
                 (
-                    self._screen_x,
-                    self._screen_y-rect.height*2
+                    self._screen_x + self.pixel_x,
+                    self._screen_y + self.pixel_y - rect.height
                 )
             )

@@ -23,7 +23,25 @@ import constants
 spawned_functions = []
 
 
+def sleepy(func):
+    def outer(self):
+        def inner():
+            try:
+                seconds = next(result)
+                spawn(seconds, inner)
+            except StopIteration:
+                print 'STOP'
+                pass
+        result = func(self)
+        if isinstance(result, types.GeneratorType):
+            inner()
+        return None  # return result would suck
+    return outer
 
+
+def sleep(seconds):
+    print 'sleep', seconds, 'seconds'
+    return seconds
 
 def spawn(seconds, method):
     spawned_functions.append([time.time() + seconds, method])
@@ -93,6 +111,7 @@ class PyBYOND(object):
 
         while True:
             now_time = time.time()
+            world.time = now_time
             for spawned_function in list(spawned_functions):
                 run_time, function = spawned_function
 

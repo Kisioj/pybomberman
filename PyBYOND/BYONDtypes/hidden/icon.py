@@ -12,16 +12,20 @@ from .icon_state import IconState
 
 
 class Icon(object):
-    def __init__(self, filename):
-        self.filename = filename
+    def scale(self, width, height):
+        # self.image = pygame.transform.scale(self.image, (width, height))
+        for name, icon_state in self.icon_states.iteritems():
+            for i, frames in enumerate(icon_state.frames):
+                icon_state.frames[i] = [
+                    pygame.transform.scale(frame, (width, height))
+                    for frame in frames
+                ]
+        print 'scale_to'
 
-        self.image = pygame.image.load(filename).convert()
-        self.width, self.height = self.image.get_size()
-
+    def load_metadata(self, filename):
         image = Image.open(filename)
         desc = image.info.get('Description')
         image.close()
-        # print desc
 
         icon_states_data = []
         state = None
@@ -52,7 +56,13 @@ class Icon(object):
 
         if state is not None:
             icon_states_data.append((state, values))
+        return icon_states_data
 
+    def load(self, filename):
+        self.filename = filename
+        self.image = pygame.image.load(filename).convert()
+        self.width, self.height = self.image.get_size()
+        icon_states_data = self.load_metadata(filename)
         self.icon_states = OrderedDict()
         start_frame = 0
         for name, attrs in icon_states_data:
@@ -61,7 +71,9 @@ class Icon(object):
             self.icon_states[name] = icon_state
             start_frame += icon_state.total_frames
 
-        # print icon_states_data
+
+    def __init__(self, filename):
+        self.load(filename)
 
 
 class IconDescriptor(object):
@@ -80,3 +92,4 @@ class IconDescriptor(object):
         if src._icon:
             icon = icon.filename
         return icon
+

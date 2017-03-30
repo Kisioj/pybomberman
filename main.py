@@ -14,6 +14,9 @@ class Player(Mob):
 
     def __login__(self):
         print self, 'has logged in'
+        self._icon.scale(64, 64)
+        # self._icon_state = self._icon.icon_states[self.icon_state]
+        print 'yolo'
 
     def __logout__(self):
         print self, 'has logged out'
