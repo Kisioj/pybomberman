@@ -16,7 +16,7 @@ from pygame.constants import (
 
 from BYONDtypes.hidden.client import Client
 from BYONDtypes.hidden.world import World
-from BYONDtypes.hidden.world_map import WorldMap
+from BYONDtypes.hidden import world_map
 from verb import verbs
 import constants
 
@@ -47,8 +47,8 @@ def spawn(seconds, method):
     spawned_functions.append([time.time() + seconds/10.0, method])
 
 
-def get_step(ref, direction):
-    return world.map.get_step(ref, direction)
+def get_step(ref, direction, steps=1):
+    return world.map.get_step(ref, direction, steps)
 
 
 def delete(atom):
@@ -57,6 +57,7 @@ def delete(atom):
 
 client = Client()
 world = World()
+world_map.world = world
 SCREEN_WIDTH, SCREEN_HEIGHT = 400*2, 368*2
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 keyboard = {
@@ -79,15 +80,12 @@ icon_key_types = {
 map_object_attribute_types = {
     'density': lambda density: density == 'True'
 }
-BYONDtypes = WorldMap.types
+BYONDtypes = world_map.WorldMap.types
 
 icons = {}
 
 
 FPS = 30
-world_map = None
-map_width = None
-map_height = None
 
 
 import types
@@ -96,7 +94,7 @@ import types
 class PyBYOND(object):
     def run(self):
         print 'verbs', verbs.items()
-        WorldMap(world, 'map.ini')
+        world_map.WorldMap(world, 'map.ini')
 
         player = world.mob()
         player.client = client

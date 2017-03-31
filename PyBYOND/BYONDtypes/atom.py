@@ -11,7 +11,6 @@ from ..internals import world
 from .hidden.icon import IconDescriptor
 from .hidden.icon_state import IconStateDescriptor
 from .hidden.mappable_meta import MappableMeta
-from .hidden.world_map import WorldMap
 
 
 dir_to_dir_index_map = {

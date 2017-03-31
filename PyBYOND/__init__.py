@@ -17,8 +17,6 @@ from .internals import (
     screen,
     FPS,
     world_map,
-    map_height,
-    map_width,
     pyBYOND,
     world,
     client,

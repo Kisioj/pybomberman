@@ -10,7 +10,7 @@ class Player(Mob):
     icon_state = ''
     pixel_x = -16
     x, y = 12, 11     # x, y i z tez zrobic jako deskryptory najlepiej i jezeli np  ustawisz x na 0 to wszystko idzie na 0
-    range = 1
+    range = 3
 
     def __login__(self):
         print self, 'has logged in'

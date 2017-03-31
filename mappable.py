@@ -6,7 +6,6 @@ from PyBYOND import internals
 # import inspect
 
 
-
 class Box(Object):
     icon = 'resources/map.png'
     icon_state = "wall1"
@@ -27,11 +26,34 @@ class Box(Object):
         delete(self)
 
 
+class Explosion(Object):
+    icon = 'resources/explosion.png'
+    icon_state = ''
+    @sleepy
+    def start(self):
+        # for direction in self.possible_directions:
+        # for direction in (NORTH, SOUTH, EAST, WEST):
+        #     for obj in get_step(self, direction):
+        #         if isinstance(obj, BYONDtypes.Box):
+        #             if not obj.exploding:
+        #                 obj.explode()
+        #         elif isinstance(obj, BYONDtypes.Bomb):
+        #             if not obj.exploded:
+        #                 print self, 'triggers explosion of', obj
+        #                 obj.explode(explosion_source)
+        yield sleep(4)
+        delete(self)
+
+
+
 class Bomb(Object):
     icon = 'resources/bomb.png'
     icon_state = ''
     density = True
+
+    explosion_source = None
     exploded = False
+    range = 1
 
     def __init__(self, *args, **kwargs):
         super(Bomb, self).__init__(*args, **kwargs)
@@ -39,29 +61,48 @@ class Bomb(Object):
         spawn(30, self.explode)   # opcjonalny 3ci argument dodac z parametrami
 
     def explode(self, explosion_source=None):
-        if not explosion_source:
-            explosion_source = self
+        self.explosion_source = explosion_source
 
         self.exploded = True
-        if explosion_source is self:
+        if self.explosion_source is None:
             print self, 'explodes'
         else:
-            print self, 'chain explodes from', explosion_source
+            print self, 'chain explodes from', self.explosion_source
 
         for obj in self.loc:
             if isinstance(obj, BYONDtypes.Mob):
                 print obj, 'got hurt'
+        print 'self.range', self.range
 
-        for direction in (NORTH, SOUTH, WEST, EAST):
-            for obj in get_step(self, direction):
-                if isinstance(obj, BYONDtypes.Box):
-                    if not obj.exploding:
-                        obj.explode()
-                elif isinstance(obj, BYONDtypes.Bomb):
-                    if not obj.exploded:
-                        print self, 'triggers explosion of', obj
-                        obj.explode(explosion_source)
+        for direction in (NORTH, SOUTH, EAST, WEST):
+            for step_size in xrange(1, self.range + 1):
+                if not self.continue_explosion(direction, step_size):
+                    break
         delete(self)
+
+    def continue_explosion(self, direction, step_size):
+        """
+
+        :param direction:
+        :param step_size:
+        :return: True if explosion should continue further, else False
+        """
+        location = get_step(self, direction, step_size)
+        for obj in location:
+            if isinstance(obj, BYONDtypes.Turf) and obj.density:
+                return False
+            elif isinstance(obj, BYONDtypes.Box):
+                if not obj.exploding:
+                    obj.explode()
+                Explosion(location.x, location.y)
+                return False
+            elif isinstance(obj, BYONDtypes.Bomb):
+                if not obj.exploded:
+                    print self, 'triggers explosion of', obj
+                    obj.explode(self.explosion_source)
+
+        Explosion(location.x, location.y)
+        return True
 
 Turf.icon = 'resources/map.png'
 Turf._icon.scale(32, 32)
