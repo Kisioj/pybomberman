@@ -5,6 +5,7 @@ from PyBYOND import internals
 # byteplay.Code.from_code(obj.explode.im_func.func_code)
 # import inspect
 
+directions = (NORTH, SOUTH, EAST, WEST)
 
 class Box(Object):
     icon = 'resources/map.png'
@@ -29,6 +30,12 @@ class Box(Object):
 class Explosion(Object):
     icon = 'resources/explosion.png'
     icon_state = ''
+
+    def __init__(self, *args, **kwargs):
+        super(Explosion, self).__init__(*args, **kwargs)
+        self._icon.scale(32, 32)
+        self.start()
+
     @sleepy
     def start(self):
         # for direction in self.possible_directions:
@@ -45,7 +52,6 @@ class Explosion(Object):
         delete(self)
 
 
-
 class Bomb(Object):
     icon = 'resources/bomb.png'
     icon_state = ''
@@ -53,7 +59,17 @@ class Bomb(Object):
 
     explosion_source = None
     exploded = False
-    range = 1
+    _range = None
+    ranges = None
+
+    @property
+    def range(self):
+        return self._range
+
+    @range.setter
+    def range(self, value):
+        self._range = value
+        self.ranges = dict(zip(directions, [value] * len(directions)))
 
     def __init__(self, *args, **kwargs):
         super(Bomb, self).__init__(*args, **kwargs)
@@ -74,10 +90,11 @@ class Bomb(Object):
                 print obj, 'got hurt'
         print 'self.range', self.range
 
-        for direction in (NORTH, SOUTH, EAST, WEST):
-            for step_size in xrange(1, self.range + 1):
+        for direction in directions:
+            for step_size in xrange(1, self.ranges[direction] + 1):
                 if not self.continue_explosion(direction, step_size):
                     break
+        Explosion(self.x, self.y)
         delete(self)
 
     def continue_explosion(self, direction, step_size):
@@ -99,7 +116,10 @@ class Bomb(Object):
             elif isinstance(obj, BYONDtypes.Bomb):
                 if not obj.exploded:
                     print self, 'triggers explosion of', obj
+                    range_left = self.ranges[direction] - get_dist(self, obj)
+                    obj.ranges[direction] = max(obj.range, range_left)
                     obj.explode(self.explosion_source)
+                return False
 
         Explosion(location.x, location.y)
         return True

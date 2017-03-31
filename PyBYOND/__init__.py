@@ -25,6 +25,7 @@ from .internals import (
     sleep,
     delete,
     get_step,
+    get_dist,
     BYONDtypes,
 )
 

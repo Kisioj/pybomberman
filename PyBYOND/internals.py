@@ -50,6 +50,8 @@ def spawn(seconds, method):
 def get_step(ref, direction, steps=1):
     return world.map.get_step(ref, direction, steps)
 
+def get_dist(source, target):
+    return abs(source.x - target.x) + abs(source.y - target.y)
 
 def delete(atom):
     atom.__remove__()
