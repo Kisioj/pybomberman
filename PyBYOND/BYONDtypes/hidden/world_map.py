@@ -19,7 +19,7 @@ class Location(object):
         ][0].__class__.__name__
 
     def __iter__(self):
-        return iter(self.cell)
+        return iter(list(self.cell))
 
     def __eq__(self, other):
         return (self.x, self.y) == (other.x, other.y)

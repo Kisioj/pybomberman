@@ -137,6 +137,8 @@ class Bomb(Obj):
                 add_explosion_location()
                 atom.explode()
                 return False
+            elif isinstance(atom, BYONDtypes.Powerup):
+                delete(atom)
             elif isinstance(atom, BYONDtypes.Bomb) and not atom.exploded:
                 atom.explode(explosion_source=explosion_source)
         add_explosion_location()
