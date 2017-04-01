@@ -51,35 +51,47 @@ class Movable(Atom):
         key_right = internals.keyboard[K_RIGHT]
         key_left = internals.keyboard[K_LEFT]
 
-        if key_up and not key_down:
-            direction = NORTH
-            location = internals.get_step(ref=self, direction=direction)
-            if True not in (obj.density for obj in location):
-                self.move(location=location, direction=direction)
+        movements = (
+            (key_up and not key_down, NORTH),
+            (key_down and not key_up, SOUTH),
+            (key_right and not key_left, EAST),
+            (key_left and not key_right, WEST),
+        )
 
-        elif key_down and not key_up:
-            direction = SOUTH
-            location = internals.get_step(ref=self, direction=direction)
-            if True not in (obj.density for obj in location):
-                self.move(location=location, direction=direction)
+        for condition, direction in movements:
+            if condition:
+                self.move(
+                    location=internals.get_step(ref=self, direction=direction),
+                    direction=direction
+                )
+                break
 
-        elif key_left and not key_right:
-            direction = WEST
-            location = internals.get_step(ref=self, direction=direction)
-            if True not in (obj.density for obj in location):
-                self.move(location=location, direction=direction)
-
-        elif key_right and not key_left:
-            direction = EAST
-            location = internals.get_step(ref=self, direction=direction)
-            if True not in (obj.density for obj in location):
-                self.move(location=location, direction=direction)
+        # if key_up and not key_down:
+        #     direction = NORTH
+        #     location = internals.get_step(ref=self, direction=direction)
+        #     self.move(location=location, direction=direction)
+        #
+        # elif key_down and not key_up:
+        #     direction = SOUTH
+        #     location = internals.get_step(ref=self, direction=direction)
+        #     self.move(location=location, direction=direction)
+        #
+        # elif key_left and not key_right:
+        #     direction = WEST
+        #     location = internals.get_step(ref=self, direction=direction)
+        #     self.move(location=location, direction=direction)
+        #
+        # elif key_right and not key_left:
+        #     direction = EAST
+        #     location = internals.get_step(ref=self, direction=direction)
+        #     self.move(location=location, direction=direction)
 
     def move(self, location, direction):
         self.dir = direction
-        world_map = world.map.fields
-        world_map[self.y][self.x].remove(self)
-        self.x, self.y = location.x, location.y
-        world_map[self.y][self.x].append(self)
-        self._moving = True
+        if True not in (obj.density for obj in location):
+            world_map = world.map.fields
+            world_map[self.y][self.x].remove(self)
+            self.x, self.y = location.x, location.y
+            world_map[self.y][self.x].append(self)
+            self._moving = True
 

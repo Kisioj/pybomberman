@@ -134,9 +134,10 @@ class Bomb(Obj):
         for atom in location:
             if isinstance(atom, BYONDtypes.Turf) and atom.density:
                 return False
-            elif isinstance(atom, BYONDtypes.Box) and not atom.exploded:
-                add_explosion_location()
-                atom.explode()
+            elif isinstance(atom, BYONDtypes.Box):
+                if not atom.exploded:
+                    add_explosion_location()
+                    atom.explode()
                 return False
             elif isinstance(atom, BYONDtypes.Powerup):
                 delete(atom)

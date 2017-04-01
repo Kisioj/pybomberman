@@ -47,6 +47,8 @@ def sleep(seconds):
 def spawn(seconds, method):
     spawned_functions.append([time.time() + seconds/10.0, method])
 
+def get_by_type(loc, types):
+    return (atom for atom in loc if isinstance(atom, types))
 
 def get_step(ref, direction, steps=1):
     return world.map.get_step(ref, direction, steps)

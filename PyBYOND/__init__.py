@@ -26,6 +26,7 @@ from .internals import (
     delete,
     get_step,
     get_dist,
+    get_by_type,
     BYONDtypes,
 )
 

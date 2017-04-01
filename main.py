@@ -22,10 +22,11 @@ class Player(Mob):
         print self, 'has logged out'
 
     def move(self, *args, **kwargs):
+        x, y = self.x, self.y
         super(Player, self).move(*args, **kwargs)
-        print 'move', self.x, self.y
-        for powerup in self.loc:
-            if isinstance(powerup, BYONDtypes.Powerup):
+        if (self.x, self.y) != (x, y):
+            print 'move', self.x, self.y
+            for powerup in get_by_type(self.loc, BYONDtypes.Powerup):
                 if powerup.name == "amount":
                     pass
                 elif powerup.name == "speed":
@@ -43,7 +44,7 @@ class Player(Mob):
 @verb
 def drop_bomb(usr):
     for atom in usr.loc:
-        if isinstance(atom, BYONDtypes.Bomb):
+        if isinstance(atom, (BYONDtypes.Bomb, BYONDtypes.Explosion)):
             return
     print usr, 'dropped the bomb'
     bomb = mappable.Bomb(usr.x, usr.y)  # lepiej chyba loc=usr.loc lub loc=locate(usr.x, usr.y)
