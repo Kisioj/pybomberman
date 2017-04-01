@@ -31,6 +31,7 @@ class Atom(object):
     y = 0
     density = False
     dir = constants.SOUTH
+    layer = 0
     pixel_x = 0
     pixel_y = 0
 

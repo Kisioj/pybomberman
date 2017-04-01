@@ -7,7 +7,7 @@ from PyBYOND import internals
 
 directions = (NORTH, SOUTH, EAST, WEST)
 
-class Box(Object):
+class Box(Obj):
     icon = 'resources/map.png'
     icon_state = "wall1"
     density = True
@@ -27,32 +27,55 @@ class Box(Object):
         delete(self)
 
 
-class Explosion(Object):
+class Explosion(Obj):
     icon = 'resources/explosion.png'
-    icon_state = ''
+    icon_state = 'NSEW'
+
+    CENTER = 1
+    BODY = 2
+    TAIL = 3
+    DIRECTION_TO_CHAR_MAP = {
+        NORTH: 'N',
+        SOUTH: 'S',
+        EAST: 'E',
+        WEST: 'W',
+    }
 
     def __init__(self, *args, **kwargs):
         super(Explosion, self).__init__(*args, **kwargs)
         self._icon.scale(32, 32)
-        self.start()
 
     @sleepy
-    def start(self):
-        # for direction in self.possible_directions:
-        # for direction in (NORTH, SOUTH, EAST, WEST):
-        #     for obj in get_step(self, direction):
-        #         if isinstance(obj, BYONDtypes.Box):
-        #             if not obj.exploding:
-        #                 obj.explode()
-        #         elif isinstance(obj, BYONDtypes.Bomb):
-        #             if not obj.exploded:
-        #                 print self, 'triggers explosion of', obj
-        #                 obj.explode(explosion_source)
+    def start(self, direction=None, fire_type=None):
+        def check_neighbour(direction):
+            for obj in get_step(self, direction):
+                if isinstance(obj, Turf) and obj.density:
+                    print 'dense', obj
+                    return ''
+            return Explosion.DIRECTION_TO_CHAR_MAP[direction]
+
+        self.dir = direction
+        if fire_type == Explosion.CENTER:
+            self.layer = OBJ_LAYER + 1
+            icon_state = ''
+            for direction in directions:
+                icon_state += check_neighbour(direction)
+            self.icon_state = icon_state
+
+        elif fire_type == Explosion.BODY:
+            self.layer = OBJ_LAYER + 2
+            if self.dir in [NORTH, SOUTH]:
+                self.icon_state = 'NS'
+            else:
+                self.icon_state = 'EW'
+        elif fire_type == Explosion.TAIL:
+            self.icon_state = Explosion.DIRECTION_TO_CHAR_MAP[self.dir]
+
         yield sleep(4)
         delete(self)
 
 
-class Bomb(Object):
+class Bomb(Obj):
     icon = 'resources/bomb.png'
     icon_state = ''
     density = True
@@ -94,7 +117,8 @@ class Bomb(Object):
             for step_size in xrange(1, self.ranges[direction] + 1):
                 if not self.continue_explosion(direction, step_size):
                     break
-        Explosion(self.x, self.y)
+        expl = Explosion(self.x, self.y)
+        expl.start(fire_type=Explosion.CENTER)
         delete(self)
 
     def continue_explosion(self, direction, step_size):
@@ -105,23 +129,30 @@ class Bomb(Object):
         :return: True if explosion should continue further, else False
         """
         location = get_step(self, direction, step_size)
+        distance = get_dist(self, location)
+        range_left = self.ranges[direction] - distance
+        if range_left:
+            fire_type = Explosion.BODY
+        else:
+            fire_type = Explosion.TAIL
+
         for obj in location:
             if isinstance(obj, BYONDtypes.Turf) and obj.density:
                 return False
             elif isinstance(obj, BYONDtypes.Box):
                 if not obj.exploding:
                     obj.explode()
-                Explosion(location.x, location.y)
+                expl = Explosion(location.x, location.y)
+                expl.start(direction=direction, fire_type=Explosion.TAIL)
                 return False
             elif isinstance(obj, BYONDtypes.Bomb):
                 if not obj.exploded:
                     print self, 'triggers explosion of', obj
-                    range_left = self.ranges[direction] - get_dist(self, obj)
                     obj.ranges[direction] = max(obj.range, range_left)
                     obj.explode(self.explosion_source)
                 return False
-
-        Explosion(location.x, location.y)
+        expl = Explosion(location.x, location.y)
+        expl.start(direction=direction, fire_type=fire_type)
         return True
 
 Turf.icon = 'resources/map.png'

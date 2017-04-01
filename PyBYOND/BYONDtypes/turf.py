@@ -1,8 +1,7 @@
 from .atom import Atom
+from ..constants import TURF_LAYER
+
 
 class Turf(Atom):
-    pass
-
-
-
+    layer = TURF_LAYER
 

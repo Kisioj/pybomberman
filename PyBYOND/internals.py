@@ -24,7 +24,7 @@ spawned_functions = []
 
 
 def sleepy(func):
-    def outer(self):
+    def outer(self, *args, **kwargs):
         def inner():
             try:
                 seconds = next(result)
@@ -32,7 +32,7 @@ def sleepy(func):
             except StopIteration:
                 print 'STOP'
                 pass
-        result = func(self)
+        result = func(self, *args, **kwargs)
         if isinstance(result, types.GeneratorType):
             inner()
         return None  # return result would suck

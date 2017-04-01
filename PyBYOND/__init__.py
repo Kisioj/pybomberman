@@ -9,7 +9,7 @@ from pygame.constants import (
 
 from .BYONDtypes.atom import Atom
 from .BYONDtypes.turf import Turf
-from .BYONDtypes.object import Object
+from .BYONDtypes.obj import Obj
 from .BYONDtypes.mob import Mob
 
 from .internals import (
@@ -34,6 +34,11 @@ from .constants import (
     SOUTH,
     WEST,
     EAST,
+
+    AREA_LAYER,
+    TURF_LAYER,
+    OBJ_LAYER,
+    MOB_LAYER,
 )
 
 from verb import verb
