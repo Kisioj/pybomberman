@@ -42,41 +42,44 @@ class Movable(Atom):
             if self._screen_x == to_screen_x and self._screen_y == to_screen_y:
                 self._moving = False
 
-    def move(self):
+    def movement(self):
         if self._moving:
             return
 
+        key_up = internals.keyboard[K_UP]
+        key_down = internals.keyboard[K_DOWN]
+        key_right = internals.keyboard[K_RIGHT]
+        key_left = internals.keyboard[K_LEFT]
+
+        if key_up and not key_down:
+            direction = NORTH
+            location = internals.get_step(ref=self, direction=direction)
+            if True not in (obj.density for obj in location):
+                self.move(location=location, direction=direction)
+
+        elif key_down and not key_up:
+            direction = SOUTH
+            location = internals.get_step(ref=self, direction=direction)
+            if True not in (obj.density for obj in location):
+                self.move(location=location, direction=direction)
+
+        elif key_left and not key_right:
+            direction = WEST
+            location = internals.get_step(ref=self, direction=direction)
+            if True not in (obj.density for obj in location):
+                self.move(location=location, direction=direction)
+
+        elif key_right and not key_left:
+            direction = EAST
+            location = internals.get_step(ref=self, direction=direction)
+            if True not in (obj.density for obj in location):
+                self.move(location=location, direction=direction)
+
+    def move(self, location, direction):
+        self.dir = direction
         world_map = world.map.fields
-
-        x, y = self.x, self.y
-
-        if internals.keyboard[K_UP]:
-            self.dir = NORTH
-            self._dir_index = NORTH_INDEX
-            if True not in (obj.density for obj in world_map[y + 1][x]):
-                y += 1
-        elif internals.keyboard[K_DOWN]:
-            self.dir = SOUTH
-            self._dir_index = SOUTH_INDEX
-            if True not in (obj.density for obj in world_map[y - 1][x]):
-                y -= 1
-        elif internals.keyboard[K_LEFT]:
-            self.dir = WEST
-            self._dir_index = WEST_INDEX
-            if True not in (obj.density for obj in world_map[y][x - 1]):
-                x -= 1
-        elif internals.keyboard[K_RIGHT]:
-            self.dir = EAST
-            self._dir_index = EAST_INDEX
-            if True not in (obj.density for obj in world_map[y][x + 1]):
-                x += 1
-
-        if (self.x, self.y) != (x, y):
-            world_map[self.y][self.x].remove(self)
-            self.x, self.y = x, y
-            world_map[self.y][self.x].append(self)
-            self._moving = True
-            print x, y
-        else:
-            self._moving = False
+        world_map[self.y][self.x].remove(self)
+        self.x, self.y = location.x, location.y
+        world_map[self.y][self.x].append(self)
+        self._moving = True
 

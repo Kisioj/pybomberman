@@ -13,7 +13,7 @@ from .hidden.icon_state import IconStateDescriptor
 from .hidden.mappable_meta import MappableMeta
 
 
-dir_to_dir_index_map = {
+DIR_TO_DIR_INDEX_MAP = {
     constants.SOUTH: constants.SOUTH_INDEX,
     constants.NORTH: constants.NORTH_INDEX,
     constants.WEST: constants.WEST_INDEX,
@@ -30,11 +30,12 @@ class Atom(object):
     x = 0
     y = 0
     density = False
-    dir = constants.SOUTH
+
     layer = 0
     pixel_x = 0
     pixel_y = 0
 
+    _dir = constants.SOUTH
     _dir_index = constants.SOUTH_INDEX
     _frame_no = 0
     _time_diff = 0
@@ -42,7 +43,17 @@ class Atom(object):
 
     _moving = False  # atoms cannot move but need this object for icon with movable states
 
+    @property
+    def dir(self):
+        return self._dir
+
+    @dir.setter
+    def dir(self, direction):
+        self._dir = direction
+        self._dir_index = DIR_TO_DIR_INDEX_MAP[direction]
+
     def __init__(self, x=None, y=None):
+        self.name = self.__class__.__name__.lower()
         self._last_time = time.time()
         if x is not None:
             self.x = x

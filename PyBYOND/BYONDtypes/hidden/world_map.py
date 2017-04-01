@@ -19,6 +19,11 @@ class Location(object):
         ][0].__class__.__name__
 
     def __iter__(self):
+        """
+        :return: iterator to copy of self.cell
+        so it is safe to remove elements
+        from map while iterating
+        """
         return iter(list(self.cell))
 
     def __eq__(self, other):

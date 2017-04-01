@@ -19,6 +19,7 @@ from BYONDtypes.hidden.world import World
 from BYONDtypes.hidden import world_map
 from verb import verbs
 import constants
+from BYONDtypes.hidden import core
 
 spawned_functions = []
 
@@ -49,6 +50,7 @@ def spawn(seconds, method):
 
 def get_step(ref, direction, steps=1):
     return world.map.get_step(ref, direction, steps)
+core.get_step = get_step
 
 def get_dist(source, target):
     return abs(source.x - target.x) + abs(source.y - target.y)
@@ -128,7 +130,7 @@ class PyBYOND(object):
                         function()
 
             player.moving()
-            player.move()
+            player.movement()
             world.map.__draw__()
 
             player.draw()

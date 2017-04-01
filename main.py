@@ -21,17 +21,35 @@ class Player(Mob):
     def __logout__(self):
         print self, 'has logged out'
 
-    def __move__(self):
-        pass
+    def move(self, *args, **kwargs):
+        super(Player, self).move(*args, **kwargs)
+        print 'move', self.x, self.y
+        for powerup in self.loc:
+            if isinstance(powerup, BYONDtypes.Powerup):
+                if powerup.name == "amount":
+                    pass
+                elif powerup.name == "speed":
+                    pass
+                elif powerup.name == "range":
+                    pass
+                elif powerup.name == "kick":
+                    pass
+                elif powerup.name == "throw":
+                    pass
+                self.client.play('resources/powerup.wav')
+                delete(powerup)
 
 
 @verb
 def drop_bomb(usr):
+    for atom in usr.loc:
+        if isinstance(atom, BYONDtypes.Bomb):
+            return
     print usr, 'dropped the bomb'
     bomb = mappable.Bomb(usr.x, usr.y)  # lepiej chyba loc=usr.loc lub loc=locate(usr.x, usr.y)
     bomb.range = usr.range
     bomb.owner = usr
-    usr.client.play('Drop.wav')
+    usr.client.play('resources/drop.wav')
 
 world.mob = Player
 client.controls[K_LCTRL] = drop_bomb

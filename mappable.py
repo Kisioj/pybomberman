@@ -39,9 +39,7 @@ class Explosion(Obj):
     icon = 'resources/explosion.png'
     icon_state = 'NSEW'
 
-    CENTER = 1
-    BODY = 2
-    TAIL = 3
+    owner = None
     DIRECTION_TO_CHAR_MAP = {
         NORTH: 'N',
         SOUTH: 'S',
@@ -83,6 +81,7 @@ class Bomb(Obj):
     icon_state = ''
     density = True
 
+    owner = None
     explosion_source = None
     exploded = False
     range = 1
@@ -119,6 +118,8 @@ class Bomb(Obj):
         for expl in explosions:
             expl.start()
 
+        if not self.explosion_source:
+            self.owner.client.play('resources/explosion.wav')
         delete(self)
 
     def continue_explosion(self, direction, step_size):
@@ -179,22 +180,13 @@ class Powerup(Obj):
 class Amount(Powerup):
     icon_state = 'amount'
 
-    def pick_up(self):
-        pass
-
 
 class Speed(Powerup):
     icon_state = 'speed'
 
-    def pick_up(self):
-        pass
-
 
 class Range(Powerup):
     icon_state = 'range'
-
-    def pick_up(self):
-        pass
 
 
 class Kick(Powerup):
