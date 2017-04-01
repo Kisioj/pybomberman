@@ -71,7 +71,10 @@ class Atom(object):
 
     def animate(self):
         icon_state = self._icon_state
-        frames_count = icon_state._frames_count
+        try:
+            frames_count = icon_state._frames_count
+        except AttributeError:
+            raise
         if frames_count > 1:
             is_animation_on = True
             movement_animation = icon_state.attr_movement

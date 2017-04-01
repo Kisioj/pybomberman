@@ -21,6 +21,9 @@ class Location(object):
     def __iter__(self):
         return iter(self.cell)
 
+    def __eq__(self, other):
+        return (self.x, self.y) == (other.x, other.y)
+
 
 class MappableTypesRegister(object):
     types = {}
@@ -70,18 +73,6 @@ class WorldMap(object):
                     atom.draw()
 
     def get_step(self, ref, direction, steps):
-        # x, y = ref.x, ref.y
-        # result = None
-        # if direction == constants.NORTH:
-        #     result = self.fields[y + steps][x]
-        # elif direction == constants.SOUTH:
-        #     result = self.fields[y - steps][x]
-        # elif direction == constants.WEST:
-        #     result = self.fields[y][x - steps]
-        # elif direction == constants.EAST:
-        #     result = self.fields[y][x + steps]
-        # return list(result)
-
         x, y = ref.x, ref.y
         if direction == constants.NORTH:
             y += steps
@@ -94,4 +85,4 @@ class WorldMap(object):
         return Location(x, y)
 
     def locate(self, x, y, z=1):  # probably should also give possibility to pass class Turf argument here, z
-        return self.fields[y][x]
+        return Location(x, y)

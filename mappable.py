@@ -13,11 +13,11 @@ class Box(Obj):
     icon = 'resources/map.png'
     icon_state = "wall1"
     density = True
-    exploding = False
+    exploded = False
 
     @sleepy
     def explode(self):
-        self.exploding = True
+        self.exploded = True
         self.icon_state = "wall1_fired"
         # print '3'
         # yield sleep(2)
@@ -33,6 +33,7 @@ class Box(Obj):
         if random.randint(1, 100) <= 50:
             powerup_class = random.choice([Amount, Speed, Range])
             powerup_class(self.x, self.y)
+
 
 class Explosion(Obj):
     icon = 'resources/explosion.png'
@@ -50,36 +51,31 @@ class Explosion(Obj):
 
     def __init__(self, *args, **kwargs):
         super(Explosion, self).__init__(*args, **kwargs)
+        self.id = world.time
         self._icon.scale(32, 32)
 
     @sleepy
-    def start(self, direction=None, fire_type=None):
-        def check_neighbour(direction):
-            for obj in get_step(self, direction):
-                if isinstance(obj, Turf) and obj.density:
-                    print 'dense', obj
-                    return ''
-            return Explosion.DIRECTION_TO_CHAR_MAP[direction]
-
-        self.dir = direction
-        if fire_type == Explosion.CENTER:
-            self.layer = OBJ_LAYER + 1
-            icon_state = ''
-            for direction in directions:
-                icon_state += check_neighbour(direction)
-            self.icon_state = icon_state
-
-        elif fire_type == Explosion.BODY:
-            self.layer = OBJ_LAYER + 2
-            if self.dir in [NORTH, SOUTH]:
-                self.icon_state = 'NS'
-            else:
-                self.icon_state = 'EW'
-        elif fire_type == Explosion.TAIL:
-            self.icon_state = Explosion.DIRECTION_TO_CHAR_MAP[self.dir]
-
+    def start(self):
+        icon_state = ''
+        for direction in directions:
+            for atom in get_step(ref=self, direction=direction):
+                if isinstance(atom, Explosion) and self.id == atom.id:
+                    icon_state += Explosion.DIRECTION_TO_CHAR_MAP[direction]
+                    break
+        if not icon_state:
+            icon_state = 'NSEW'
+        self.icon_state = icon_state
+        print self.id, self.x, self.y, self.icon_state, icon_state
         yield sleep(4)
         delete(self)
+
+
+class Locations(list):
+    def __contains__(self, item):
+        for location in self:
+            if location == item:
+                return True
+        return False
 
 
 class Bomb(Obj):
@@ -89,21 +85,12 @@ class Bomb(Obj):
 
     explosion_source = None
     exploded = False
-    _range = None
-    ranges = None
-
-    @property
-    def range(self):
-        return self._range
-
-    @range.setter
-    def range(self, value):
-        self._range = value
-        self.ranges = dict(zip(directions, [value] * len(directions)))
+    range = 1
 
     def __init__(self, *args, **kwargs):
         super(Bomb, self).__init__(*args, **kwargs)
         self._icon.scale(32, 32)
+        self.explosion_locations = Locations()
         spawn(30, self.explode)   # opcjonalny 3ci argument dodac z parametrami
 
     def explode(self, explosion_source=None):
@@ -111,6 +98,7 @@ class Bomb(Obj):
 
         self.exploded = True
         if self.explosion_source is None:
+            self.explosion_locations.append(self.loc)
             print self, 'explodes'
         else:
             print self, 'chain explodes from', self.explosion_source
@@ -121,52 +109,37 @@ class Bomb(Obj):
         print 'self.range', self.range
 
         for direction in directions:
-            for step_size in xrange(1, self.ranges[direction] + 1):
+            for step_size in xrange(1, self.range + 1):
                 if not self.continue_explosion(direction, step_size):
                     break
-        expl = Explosion(self.x, self.y)
-        expl.start(fire_type=Explosion.CENTER)
+
+        explosions = []
+        for loc in self.explosion_locations:
+            explosions.append(Explosion(loc.x, loc.y))
+        for expl in explosions:
+            expl.start()
+
         delete(self)
 
     def continue_explosion(self, direction, step_size):
-        """
+        def add_explosion_location():
+            if location not in explosion_source.explosion_locations:
+                explosion_source.explosion_locations.append(location)
 
-        :param direction:
-        :param step_size:
-        :return: True if explosion should continue further, else False
-        """
+        explosion_source = self.explosion_source
+        if not explosion_source:
+            explosion_source = self
         location = get_step(self, direction, step_size)
-        distance = get_dist(self, location)
-        range_left = self.ranges[direction] - distance
-        if range_left:
-            fire_type = Explosion.BODY
-        else:
-            fire_type = Explosion.TAIL
-
-        # if range_left:
-        #     for obj in get_step(ref=location, direction=direction):
-        #
-        #     fire_type = Explosion.TAIL
-
-        for obj in location:
-            if isinstance(obj, BYONDtypes.Turf) and obj.density:
+        for atom in location:
+            if isinstance(atom, BYONDtypes.Turf) and atom.density:
                 return False
-            elif isinstance(obj, BYONDtypes.Powerup):
-                delete(obj)
-            elif isinstance(obj, BYONDtypes.Box):
-                if not obj.exploding:
-                    obj.explode()
-                expl = Explosion(location.x, location.y)
-                expl.start(direction=direction, fire_type=Explosion.TAIL)
+            elif isinstance(atom, BYONDtypes.Box) and not atom.exploded:
+                add_explosion_location()
+                atom.explode()
                 return False
-            elif isinstance(obj, BYONDtypes.Bomb):
-                if not obj.exploded:
-                    print self, 'triggers explosion of', obj
-                    obj.ranges[direction] = max(obj.range, range_left)
-                    obj.explode(self.explosion_source)
-                return False
-        expl = Explosion(location.x, location.y)
-        expl.start(direction=direction, fire_type=fire_type)
+            elif isinstance(atom, BYONDtypes.Bomb) and not atom.exploded:
+                atom.explode(explosion_source=explosion_source)
+        add_explosion_location()
         return True
 
 Turf.icon = 'resources/map.png'
