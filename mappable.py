@@ -25,12 +25,12 @@ class Box(Obj):
         # yield sleep(2)
         # print '1'
         # yield sleep(3)
-        yield sleep(7)
+        yield sleep(8)
         self.drop_powerup()
         delete(self)
 
     def drop_powerup(self):
-        if random.randint(1, 100) <= 50:
+        if random.randint(1, 100) <= 20:
             powerup_class = random.choice([Amount, Speed, Range])
             powerup_class(self.x, self.y)
 
@@ -112,13 +112,12 @@ class Bomb(Obj):
                 if not self.continue_explosion(direction, step_size):
                     break
 
-        explosions = []
-        for loc in self.explosion_locations:
-            explosions.append(Explosion(loc.x, loc.y))
-        for expl in explosions:
-            expl.start()
-
         if not self.explosion_source:
+            explosions = []
+            for loc in self.explosion_locations:
+                explosions.append(Explosion(loc.x, loc.y))
+            for expl in explosions:
+                expl.start()
             self.owner.client.play('resources/explosion.wav')
         delete(self)
 
