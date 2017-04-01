@@ -1,11 +1,13 @@
 from PyBYOND import *
 from PyBYOND import internals
+import random
 # import byteplay
 # import types
 # byteplay.Code.from_code(obj.explode.im_func.func_code)
 # import inspect
 
 directions = (NORTH, SOUTH, EAST, WEST)
+
 
 class Box(Obj):
     icon = 'resources/map.png'
@@ -24,8 +26,13 @@ class Box(Obj):
         # print '1'
         # yield sleep(3)
         yield sleep(7)
+        self.drop_powerup()
         delete(self)
 
+    def drop_powerup(self):
+        if random.randint(1, 100) <= 50:
+            powerup_class = random.choice([Amount, Speed, Range])
+            powerup_class(self.x, self.y)
 
 class Explosion(Obj):
     icon = 'resources/explosion.png'
@@ -136,9 +143,16 @@ class Bomb(Obj):
         else:
             fire_type = Explosion.TAIL
 
+        # if range_left:
+        #     for obj in get_step(ref=location, direction=direction):
+        #
+        #     fire_type = Explosion.TAIL
+
         for obj in location:
             if isinstance(obj, BYONDtypes.Turf) and obj.density:
                 return False
+            elif isinstance(obj, BYONDtypes.Powerup):
+                delete(obj)
             elif isinstance(obj, BYONDtypes.Box):
                 if not obj.exploding:
                     obj.explode()
@@ -177,3 +191,40 @@ for i in xrange(1, 18):
         (MapEdge, ),
         {'icon_state': 'map_edge_{:0>2}'.format(i)}
     )
+
+
+class Powerup(Obj):
+    icon = 'resources/powerups.png'
+
+    def __init__(self, *args, **kwargs):
+        super(Powerup, self).__init__(*args, **kwargs)
+        self._icon.scale(32, 32)
+
+
+class Amount(Powerup):
+    icon_state = 'amount'
+
+    def pick_up(self):
+        pass
+
+
+class Speed(Powerup):
+    icon_state = 'speed'
+
+    def pick_up(self):
+        pass
+
+
+class Range(Powerup):
+    icon_state = 'range'
+
+    def pick_up(self):
+        pass
+
+
+class Kick(Powerup):
+    icon_state = 'kick'
+
+
+class Throw(Powerup):
+    icon_state = 'throw'

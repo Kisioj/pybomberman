@@ -62,7 +62,7 @@ class Icon(object):
 
     def load(self, filename):
         self.filename = filename
-        self.image = pygame.image.load(filename).convert()
+        self.image = pygame.image.load(filename)#.convert()  # z convertem niby szybciej ale niektore ikonki maja hujowe kolorki
         self.width, self.height = self.image.get_size()
         icon_states_data = self.load_metadata(filename)
         self.icon_states = OrderedDict()

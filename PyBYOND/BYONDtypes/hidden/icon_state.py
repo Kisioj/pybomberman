@@ -39,11 +39,13 @@ class IconState(object):
 class IconStateDescriptor(object):
     def __set__(self, src, state_name):
         # print 'src', src, 'state_name', state_name
-
-        if src._icon:
-            src._icon_state = src._icon.icon_states[state_name]
+        _icon_state = src._icon.icon_states.get(state_name)
+        if src._icon and _icon_state:
+            src._icon_state = _icon_state
             src._frame_no = 0
             src._last_time = time.time()
+        else:
+            src._icon_state = ''
 
 
     def __get__(self, src, cls):
