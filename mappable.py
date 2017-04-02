@@ -25,8 +25,10 @@ class Box(Obj):
         # yield sleep(2)
         # print '1'
         # yield sleep(3)
-        yield sleep(10)
+        yield sleep(4)
+        self.density = False
         self.drop_powerup()
+        yield sleep(3)
         delete(self)
 
     def drop_powerup(self):
