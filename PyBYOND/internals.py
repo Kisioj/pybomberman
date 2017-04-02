@@ -134,6 +134,8 @@ class PyBYOND(object):
                             pass
                     else:
                         function()
+                else:
+                    break
 
             player.moving()
             player.movement()
