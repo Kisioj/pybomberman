@@ -1,4 +1,5 @@
 import time
+from ... import constants
 
 class IconState(object):
     def __init__(self, icon, start_frame, name, **kwargs):
@@ -8,7 +9,8 @@ class IconState(object):
 
         self._frames_count = kwargs.get('frames', 1)
         self.attr_dirs = kwargs.get('dirs', 1)
-        self.attr_loop = kwargs.get('loop', -1)  # -1 = infinite, how many times loop through animation TODO
+        self.attr_loop = kwargs.get('loop', constants.INFINITE)  # -1 = infinite, how many times loop through animation TODO
+        print 'attr_loop', self.attr_loop
         self.attr_rewind = kwargs.get('rewind', False)  # TODO
         self.delay = kwargs.get('delay', [])
         self.total_delay = sum(self.delay)
@@ -43,6 +45,7 @@ class IconStateDescriptor(object):
         if src._icon and _icon_state:
             src._icon_state = _icon_state
             src._frame_no = 0
+            src._loop_no = 0
             src._last_time = time.time()
         else:
             src._icon_state = ''

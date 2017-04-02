@@ -80,7 +80,7 @@ icon_key_types = {
     'dirs': int,
     'frames': int,
     'delay': lambda delay: [int(x) for x in delay.split(',')],  # delay in 1/10s
-    'loop': bool,
+    'loop': int,
 }
 
 map_object_attribute_types = {

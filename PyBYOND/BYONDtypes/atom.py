@@ -38,6 +38,7 @@ class Atom(object):
     _dir = constants.SOUTH
     _dir_index = constants.SOUTH_INDEX
     _frame_no = 0
+    _loop_no = 0  # how many loops animation has done
     _time_diff = 0
     _deleted = False
 
@@ -86,13 +87,17 @@ class Atom(object):
             frames_count = icon_state._frames_count
         except AttributeError:
             raise
+
+        # animate_more = icon_state.attr_loop == constants.INFINITE or self._loop_no < icon_state.attr_loop
+
         if frames_count > 1:
             is_animation_on = True
             movement_animation = icon_state.attr_movement
             if movement_animation and not self._moving:
                 is_animation_on = False
-
             if is_animation_on:
+                if icon_state.attr_loop != constants.INFINITE and self._loop_no >= icon_state.attr_loop:
+                    return
                 now_time = world.time
                 self._time_diff += now_time - self._last_time
                 last_time_diff = self._time_diff
@@ -103,6 +108,7 @@ class Atom(object):
 
                 if self._time_diff > total_delay_in_seconds:
                     self._time_diff %= total_delay_in_seconds
+                    self._loop_no += 1
                     print 'ROUGH'
 
                 changed_frame = False
@@ -112,13 +118,16 @@ class Atom(object):
                      self._frame_no += 1
                      self._frame_no %= icon_state._frames_count
                      changed_frame = True
+                     if self._frame_no == (icon_state._frames_count - 1):
+                         self._loop_no += 1
+
                 if movement_animation and changed_frame:
                      print 'frame: {}, time_diff: {}, world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds)
             else:
-                self._frame_no = 0
-                self._last_time = world.time
-
                 if movement_animation:
+                    self._loop_no = 0
+                    self._frame_no = 0
+                    self._last_time = world.time
                     sys.stdout.write('\r' + ((self.dots / 100) + 1) * '.')
                     self.dots += 1
                     if self.dots >= 300:

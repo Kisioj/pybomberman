@@ -25,7 +25,7 @@ class Box(Obj):
         # yield sleep(2)
         # print '1'
         # yield sleep(3)
-        yield sleep(8)
+        yield sleep(10)
         self.drop_powerup()
         delete(self)
 
@@ -135,8 +135,8 @@ class Bomb(Obj):
                 return False
             elif isinstance(atom, BYONDtypes.Box):
                 if not atom.exploded:
-                    add_explosion_location()
                     atom.explode()
+                add_explosion_location()
                 return False
             elif isinstance(atom, BYONDtypes.Powerup):
                 delete(atom)
