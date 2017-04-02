@@ -2,6 +2,7 @@ from ... import constants
 import core
 import pygame
 
+sounds = {}
 
 class Client(object):
     def __init__(self):
@@ -17,8 +18,9 @@ class Client(object):
         pass
 
     def play(self, filename):
-        sound = pygame.mixer.Sound(filename)
-        sound.play()
+        if filename not in sounds:
+            sounds[filename] = pygame.mixer.Sound(filename)
+        sounds[filename].play()
         print filename, 'plays'
 
     def __north__(self):

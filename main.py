@@ -62,3 +62,12 @@ pyBYOND.run()
 # 2 odpalanie gry
 # 3 odpalanie edytora mapy
 # 4 odpalanie edytora ikon
+
+
+# TODO:
+# LAYERS, zeby spod spodu niszczonego boxa bylo widac bonus
+# KOPANIE BOMB
+# RZUCANIE BOMBAMI
+# WIEKSZA MAPKA (PRZEWIJANIE MAPKI)
+# CLIENT.VIEW
+# KOLIZJE NA BRZEGACH

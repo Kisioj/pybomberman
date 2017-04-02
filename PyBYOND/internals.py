@@ -99,6 +99,10 @@ import types
 
 class PyBYOND(object):
     def run(self):
+        def spawned_function_time(spawned_function):
+            run_time, function = spawned_function
+            return run_time
+
         print 'verbs', verbs.items()
         world_map.WorldMap(world, 'map.ini')
 
@@ -116,7 +120,7 @@ class PyBYOND(object):
         while True:
             now_time = time.time()
             world.time = now_time
-            for spawned_function in list(spawned_functions):
+            for spawned_function in sorted(spawned_functions, key=spawned_function_time):
                 run_time, function = spawned_function
 
                 if hasattr(function, '__self__') and function.__self__._deleted:
