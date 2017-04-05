@@ -44,6 +44,9 @@ class Atom(object):
 
     _moving = False  # atoms cannot move but need this object for icon with movable states
 
+    def __repr__(self):
+        return 'the {}'.format(self.__class__.__name__.lower())
+
     @property
     def dir(self):
         return self._dir
@@ -78,8 +81,9 @@ class Atom(object):
         return world.map.locate(self.x, self.y)
 
     def draw(self):
-        self.animate()
-        self.render()
+        if self.icon:
+            self.animate()
+            self.render()
 
     def animate(self):
         icon_state = self._icon_state
@@ -146,3 +150,20 @@ class Atom(object):
                     self._screen_y + self.pixel_y - rect.height
                 )
             )
+
+
+    def Enter(self, movable, old_location):
+        print self, "__Enter__"
+        return True
+
+    def Entered(self, movable, old_location):
+        print self, "__Entered__"
+        return True
+
+    def Exit(self, movable, new_location):
+        print self, "__Exit__"
+        return True
+
+    def Exited(self, movable, new_location):
+        print self, "__Exited__"
+        return True

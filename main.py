@@ -21,9 +21,9 @@ class Player(Mob):
     def __logout__(self):
         print self, 'has logged out'
 
-    def move(self, *args, **kwargs):
+    def Move(self, *args, **kwargs):
         x, y = self.x, self.y
-        super(Player, self).move(*args, **kwargs)
+        super(Player, self).Move(*args, **kwargs)
         if (self.x, self.y) != (x, y):
             print 'move', self.x, self.y
             for powerup in get_by_type(self.loc, BYONDtypes.Powerup):
@@ -65,10 +65,11 @@ pyBYOND.run()
 
 
 # TODO:
-# LAYERS, zeby spod spodu niszczonego boxa bylo widac bonus
-# KOPANIE BOMB
+# KOPANIE BOMB  - implementacja Enter, Exit, Entered, Exited i Bump
 # RZUCANIE BOMBAMI
 # WIEKSZA MAPKA (PRZEWIJANIE MAPKI)
 # CLIENT.VIEW
 # KOLIZJE NA BRZEGACH
 # PER PIXEL CLICK
+# NOWY FORMAT MAPKI GDZIE JEST DUZO MAPEK w 1 PLIKU
+# ZEBY BONUSY MIALY JAKIS EFEKT (w tym SPEED)

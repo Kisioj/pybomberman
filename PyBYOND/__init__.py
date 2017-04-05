@@ -11,6 +11,7 @@ from .BYONDtypes.atom import Atom
 from .BYONDtypes.turf import Turf
 from .BYONDtypes.obj import Obj
 from .BYONDtypes.mob import Mob
+from .BYONDtypes.area import Area
 
 from .internals import (
     keyboard,

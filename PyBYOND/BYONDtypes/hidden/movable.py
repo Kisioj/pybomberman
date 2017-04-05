@@ -60,7 +60,7 @@ class Movable(Atom):
 
         for condition, direction in movements:
             if condition:
-                self.move(
+                self.Move(
                     location=internals.get_step(ref=self, direction=direction),
                     direction=direction
                 )
@@ -86,12 +86,29 @@ class Movable(Atom):
         #     location = internals.get_step(ref=self, direction=direction)
         #     self.move(location=location, direction=direction)
 
-    def move(self, location, direction):
+    def Move(self, location, direction):
         self.dir = direction
-        if True not in (obj.density for obj in location):
+
+        dense_object = [
+            obj
+            for obj in location
+            if obj.density is True
+        ]
+        if dense_object:
+            self.Bump(dense_object[0])
+        else:
+            if not self.loc.Exit(self, location):
+                return
+            if not location.Enter(self, self.loc):
+                return
+            self.loc.Exited(self, location)
+            location.Entered(self, self.loc)
+
             world_map = world.map.fields
-            world_map[self.y][self.x].remove(self)
+            world_map[self.y][self.x].remove(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x, y
             self.x, self.y = location.x, location.y
-            world_map[self.y][self.x].append(self)
+            world_map[self.y][self.x].append(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x , y
             self._moving = True
 
+    def Bump(self, obstacle):
+        print self, 'bumps into', obstacle

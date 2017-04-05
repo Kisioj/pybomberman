@@ -9,6 +9,12 @@ import random
 directions = (NORTH, SOUTH, EAST, WEST)
 
 
+class Floor(Area):
+    pass
+
+class House(Area):
+    pass
+
 class Box(Obj):
     icon = 'resources/map.png'
     icon_state = "wall1"
@@ -25,14 +31,15 @@ class Box(Obj):
         # yield sleep(2)
         # print '1'
         # yield sleep(3)
+
         yield sleep(4)
-        self.density = False
+        # self.density = False
         self.drop_powerup()
         yield sleep(3)
         delete(self)
 
     def drop_powerup(self):
-        if random.randint(1, 100) <= 20:
+        if random.randint(1, 100) <= 90:
             powerup_class = random.choice([Amount, Speed, Range])
             powerup_class(self.x, self.y)
 
@@ -155,6 +162,10 @@ class Grass(Turf):
     icon_state = 'grass'
 
 
+class DarkGrass(Turf):
+    icon_state = 'grass'
+
+
 class Wall2(Turf):
     icon_state = 'wall2'
     density = True
@@ -173,6 +184,7 @@ for i in xrange(1, 18):
 
 class Powerup(Obj):
     icon = 'resources/powerups.png'
+    layer = TURF_LAYER
 
     def __init__(self, *args, **kwargs):
         super(Powerup, self).__init__(*args, **kwargs)
