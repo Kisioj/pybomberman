@@ -1,5 +1,5 @@
 import sys
-import ConfigParser
+import configparser
 import time
 
 import pygame
@@ -14,12 +14,12 @@ from pygame.constants import (
     K_ESCAPE,
 )
 
-from BYONDtypes.hidden.client import Client
-from BYONDtypes.hidden.world import World
-from BYONDtypes.hidden import world_map
-from verb import verbs
-import constants
-from BYONDtypes.hidden import core
+from .BYONDtypes.hidden.client import Client
+from .BYONDtypes.hidden.world import World
+from .BYONDtypes.hidden import world_map
+from .verb import verbs
+from . import constants
+from .BYONDtypes.hidden import core
 
 spawned_functions = []
 
@@ -31,7 +31,7 @@ def sleepy(func):
                 seconds = next(result)
                 spawn(seconds, inner)
             except StopIteration:
-                print 'STOP'
+                print('STOP')
                 pass
         result = func(self, *args, **kwargs)
         if isinstance(result, types.GeneratorType):
@@ -41,7 +41,7 @@ def sleepy(func):
 
 
 def sleep(seconds):
-    print 'sleep', seconds, 'seconds'
+    print('sleep', seconds, 'seconds')
     return seconds
 
 def spawn(seconds, method):
@@ -103,7 +103,7 @@ class PyBYOND(object):
             run_time, function = spawned_function
             return run_time
 
-        print 'verbs', verbs.items()
+        print('verbs', verbs.items())
         world_map.WorldMap(world, 'map.ini')
 
         player = world.mob()

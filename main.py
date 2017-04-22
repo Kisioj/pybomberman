@@ -13,19 +13,19 @@ class Player(Mob):
     range = 3
 
     def __login__(self):
-        print self, 'has logged in'
+        print(self, 'has logged in')
         self._icon.scale(64, 64)
         # self._icon_state = self._icon.icon_states[self.icon_state]
-        print 'yolo'
+        print('yolo')
 
     def __logout__(self):
-        print self, 'has logged out'
+        print(self, 'has logged out')
 
     def Move(self, *args, **kwargs):
         x, y = self.x, self.y
         super(Player, self).Move(*args, **kwargs)
         if (self.x, self.y) != (x, y):
-            print 'move', self.x, self.y
+            print('move', self.x, self.y)
             for powerup in get_by_type(self.loc, BYONDtypes.Powerup):
                 if powerup.name == "amount":
                     pass
@@ -46,14 +46,24 @@ def drop_bomb(usr):
     for atom in usr.loc:
         if isinstance(atom, (BYONDtypes.Bomb, BYONDtypes.Explosion)):
             return
-    print usr, 'dropped the bomb'
+    print(usr, 'dropped the bomb')
     bomb = mappable.Bomb(usr.x, usr.y)  # lepiej chyba loc=usr.loc lub loc=locate(usr.x, usr.y)
     bomb.range = usr.range
     bomb.owner = usr
     usr.client.play('resources/drop.wav')
 
+def walk(*args, **kwargs):
+    pass
+
+@verb
+def kick_bomb(usr):
+    for bomb in get_by_type(get_step(usr, usr.dir), BYONDtypes.Bomb):
+        walk(bomb, usr.dir, 1)
+        usr.client.play('resources/kick.wav')
+
 world.mob = Player
 client.controls[K_LCTRL] = drop_bomb
+client.controls[K_RCTRL] = kick_bomb
 pyBYOND.run()
 
 

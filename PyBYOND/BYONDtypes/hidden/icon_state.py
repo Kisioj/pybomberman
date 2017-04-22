@@ -1,7 +1,8 @@
 import time
 from ... import constants
 
-class IconState(object):
+
+class IconState:
     def __init__(self, icon, start_frame, name, **kwargs):
         self.width = icon.tile_width
         self.height = icon.tile_height
@@ -10,7 +11,7 @@ class IconState(object):
         self._frames_count = kwargs.get('frames', 1)
         self.attr_dirs = kwargs.get('dirs', 1)
         self.attr_loop = kwargs.get('loop', constants.INFINITE)  # -1 = infinite, how many times loop through animation TODO
-        print 'attr_loop', self.attr_loop
+        print('attr_loop', self.attr_loop)
         self.attr_rewind = kwargs.get('rewind', False)  # TODO
         self.delay = kwargs.get('delay', [])
         self.total_delay = sum(self.delay)
@@ -20,8 +21,8 @@ class IconState(object):
         frames_to_start = start_frame
         frames_left = self.total_frames
         frames = []
-        for tile_y in xrange(0, icon.height / self.height):
-            for tile_x in xrange(0, icon.width / self.width):
+        for tile_y in range(0, icon.height // self.height):
+            for tile_x in range(0, icon.width // self.width):
                 if frames_to_start == 0:
                     if frames_left > 0:
                         frames_left -= 1
@@ -30,7 +31,7 @@ class IconState(object):
                 else:
                     frames_to_start -= 1
 
-        self.frames = [[] for _ in xrange(self.attr_dirs)]
+        self.frames = [[] for _ in range(self.attr_dirs)]
         for i, frame in enumerate(frames):
             idx = i % self.attr_dirs
             self.frames[idx].append(frame)
@@ -49,7 +50,6 @@ class IconStateDescriptor(object):
             src._last_time = time.time()
         else:
             src._icon_state = ''
-
 
     def __get__(self, src, cls):
         # print 'src', src, 'cls', cls

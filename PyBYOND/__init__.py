@@ -4,6 +4,7 @@ from pygame.constants import (
     K_UP,
     K_DOWN,
     K_LCTRL,
+    K_RCTRL,
 )
 
 
@@ -43,6 +44,6 @@ from .constants import (
     MOB_LAYER,
 )
 
-from verb import verb
+from .verb import verb
 
 

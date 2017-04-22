@@ -11,22 +11,22 @@ from ...internals import (
 from .icon_state import IconState
 
 
-class Icon(object):
+class Icon:
     def scale(self, width, height):
         # self.image = pygame.transform.scale(self.image, (width, height))
-        for name, icon_state in self.icon_states.iteritems():
+        for name, icon_state in self.icon_states.items():
             for i, frames in enumerate(icon_state.frames):
                 icon_state.frames[i] = [
                     pygame.transform.scale(frame, (width, height))
                     for frame in frames
                 ]
-        print 'scale', width, height
+        print('scale', width, height)
 
     def load_metadata(self, filename):
         image = Image.open(filename)
         desc = image.info.get('Description')
-        print image.info
-        print 'desc', desc
+        print(image.info)
+        print('desc', desc)
         image.close()
 
         icon_states_data = []

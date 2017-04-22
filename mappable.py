@@ -72,7 +72,7 @@ class Explosion(Obj):
         if not icon_state:
             icon_state = 'NSEW'
         self.icon_state = icon_state
-        print self.id, self.x, self.y, self.icon_state, icon_state
+        print(self.id, self.x, self.y, self.icon_state, icon_state)
         yield sleep(4)
         delete(self)
 
@@ -107,17 +107,17 @@ class Bomb(Obj):
         self.exploded = True
         if self.explosion_source is None:
             self.explosion_locations.append(self.loc)
-            print self, 'explodes'
+            print(self, 'explodes')
         else:
-            print self, 'chain explodes from', self.explosion_source
+            print(self, 'chain explodes from', self.explosion_source)
 
         for obj in self.loc:
             if isinstance(obj, BYONDtypes.Mob):
-                print obj, 'got hurt'
-        print 'self.range', self.range
+                print(obj, 'got hurt')
+        print('self.range', self.range)
 
         for direction in directions:
-            for step_size in xrange(1, self.range + 1):
+            for step_size in range(1, self.range + 1):
                 if not self.continue_explosion(direction, step_size):
                     break
 
@@ -174,7 +174,7 @@ class Wall2(Turf):
 class MapEdge(Turf):
     density = True
 
-for i in xrange(1, 18):
+for i in range(1, 18):
     type(
         'MapEdge{:0>2}'.format(i),
         (MapEdge, ),

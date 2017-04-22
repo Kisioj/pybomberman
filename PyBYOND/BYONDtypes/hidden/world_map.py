@@ -1,11 +1,11 @@
-import ConfigParser
+import configparser
 from ... import constants
 
 
 world = None
 
 
-class Location(object):
+class Location:
     def __init__(self, x, y):
         from ..turf import Turf  # FIXME, tutaj przez circual import
         from ..area import Area
@@ -85,7 +85,7 @@ class Location(object):
                 area.Entered(movable, old_location)
 
 
-class MappableTypesRegister(object):
+class MappableTypesRegister:
     types = {}
 
     def __getitem__(self, type_name):
@@ -98,22 +98,22 @@ class MappableTypesRegister(object):
         MappableTypesRegister.types[cls.__name__] = cls
 
     def __iter__(self):
-        return self.types.iterkeys()
+        return self.types.keys()
 
 
-class WorldMap(object):
+class WorldMap:
     types = MappableTypesRegister()
 
     def __init__(self, world, filename):
         world.map = self
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(filename)
         raw_map = config.get('level', 'map').split('\n')
         self.width, self.height = len(raw_map[0]), len(raw_map)
 
-        self.fields = [[[] for _ in xrange(self.width)] for _ in xrange(self.height)]
-        for y in xrange(self.height):
-            for x in xrange(self.width):
+        self.fields = [[[] for _ in range(self.width)] for _ in range(self.height)]
+        for y in range(self.height):
+            for x in range(self.width):
                 cell = self.fields[y][x]
 
                 symbol = raw_map[self.height - y - 1][x]
@@ -127,8 +127,8 @@ class WorldMap(object):
                     WorldMap.types[atom_type](x=x, y=y)
 
     def __draw__(self):
-        for y in xrange(self.height):
-            for x in xrange(self.width):
+        for y in range(self.height):
+            for x in range(self.width):
                 for atom in sorted(self.fields[y][x], key=lambda atom: atom.layer):
                     atom.draw()
 

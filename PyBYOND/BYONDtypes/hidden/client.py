@@ -1,5 +1,5 @@
 from ... import constants
-import core
+from . import core
 import pygame
 
 sounds = {}
@@ -21,7 +21,7 @@ class Client(object):
         if filename not in sounds:
             sounds[filename] = pygame.mixer.Sound(filename)
         sounds[filename].play()
-        print filename, 'plays'
+        print(filename, 'plays')
 
     def __north__(self):
         self.mob.Move(loc=core.get_step(self.mob, constants.NORTH), direction=constants.NORTH)

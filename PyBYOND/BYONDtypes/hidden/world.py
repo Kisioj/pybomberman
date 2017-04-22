@@ -1,7 +1,7 @@
 # from ..mob import Mob
 
 
-class World(object):
+class World:
     def __init__(self):
         self.mob = None  # Mob
         self.icon_size = 32  #  TODO mozliwosc dodania "32x32"

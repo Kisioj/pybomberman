@@ -21,8 +21,7 @@ DIR_TO_DIR_INDEX_MAP = {
 }
 
 
-class Atom(object):
-    __metaclass__ = MappableMeta
+class Atom(metaclass=MappableMeta):
     _icon = ''
     _icon_state = ''
     icon = IconDescriptor()
@@ -71,7 +70,7 @@ class Atom(object):
 
     def __remove__(self):
         if self not in world.map.fields[self.y][self.x]:
-            print self, self.x, self.y, world.map.fields[self.y][self.x]
+            print(self, self.x, self.y, world.map.fields[self.y][self.x])
         assert self in world.map.fields[self.y][self.x]
         world.map.fields[self.y][self.x].remove(self)
         self._deleted = True
@@ -113,7 +112,7 @@ class Atom(object):
                 if self._time_diff > total_delay_in_seconds:
                     self._time_diff %= total_delay_in_seconds
                     self._loop_no += 1
-                    print 'ROUGH'
+                    print('ROUGH')
 
                 changed_frame = False
                 while self._time_diff > current_delay_in_seconds:
@@ -126,13 +125,13 @@ class Atom(object):
                          self._loop_no += 1
 
                 if movement_animation and changed_frame:
-                     print 'frame: {}, time_diff: {}, world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds)
+                     print('frame: {}, time_diff: {}, world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds))
             else:
                 if movement_animation:
                     self._loop_no = 0
                     self._frame_no = 0
                     self._last_time = world.time
-                    sys.stdout.write('\r' + ((self.dots / 100) + 1) * '.')
+                    sys.stdout.write('\r' + ((self.dots // 100) + 1) * '.')
                     self.dots += 1
                     if self.dots >= 300:
                         self.dots = 1
@@ -151,19 +150,18 @@ class Atom(object):
                 )
             )
 
-
     def Enter(self, movable, old_location):
-        print self, "__Enter__"
+        print(self, "__Enter__")
         return True
 
     def Entered(self, movable, old_location):
-        print self, "__Entered__"
+        print(self, "__Entered__")
         return True
 
     def Exit(self, movable, new_location):
-        print self, "__Exit__"
+        print(self, "__Exit__")
         return True
 
     def Exited(self, movable, new_location):
-        print self, "__Exited__"
+        print(self, "__Exited__")
         return True

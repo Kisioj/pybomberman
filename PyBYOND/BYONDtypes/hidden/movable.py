@@ -111,4 +111,4 @@ class Movable(Atom):
             self._moving = True
 
     def Bump(self, obstacle):
-        print self, 'bumps into', obstacle
+        print(self, 'bumps into', obstacle)
