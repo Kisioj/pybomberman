@@ -1,8 +1,14 @@
-from ... import constants
-from . import core
 import pygame
 
+from PyBYOND import (
+    api,
+    constants,
+    singletons as si,
+)
+
+
 sounds = {}
+
 
 class Client(object):
     def __init__(self):
@@ -24,16 +30,18 @@ class Client(object):
         print(filename, 'plays')
 
     def __north__(self):
-        self.mob.Move(loc=core.get_step(self.mob, constants.NORTH), direction=constants.NORTH)
+        self.mob.Move(loc=api.get_step(self.mob, constants.NORTH), direction=constants.NORTH)
 
     def __south__(self):
-        self.mob.Move(loc=core.get_step(self.mob, constants.SOUTH), direction=constants.SOUTH)
+        self.mob.Move(loc=api.get_step(self.mob, constants.SOUTH), direction=constants.SOUTH)
 
     def __east__(self):
-        self.mob.Move(loc=core.get_step(self.mob, constants.EAST), direction=constants.EAST)
+        self.mob.Move(loc=api.get_step(self.mob, constants.EAST), direction=constants.EAST)
 
     def __west__(self):
-        self.mob.Move(loc=core.get_step(self.mob, constants.WEST), direction=constants.WEST)
+        self.mob.Move(loc=api.get_step(self.mob, constants.WEST), direction=constants.WEST)
 
     def __move__(self, location, direction):
         return self.mob.Move(location=location, direction=direction)
+
+# si.client = Client()

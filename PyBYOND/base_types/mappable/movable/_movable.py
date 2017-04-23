@@ -1,4 +1,3 @@
-from ..atom import Atom
 from pygame.constants import (
     K_LEFT,
     K_RIGHT,
@@ -6,19 +5,17 @@ from pygame.constants import (
     K_DOWN,
 )
 
-from ...constants import (
+from PyBYOND.base_types.atom import Atom
+from PyBYOND.constants import (
     SOUTH,
     NORTH,
     WEST,
     EAST,
-    SOUTH_INDEX,
-    NORTH_INDEX,
-    EAST_INDEX,
-    WEST_INDEX,
 )
-from ...internals import world
-from ... import internals
-
+from PyBYOND import singletons as si
+from PyBYOND.api import (
+    get_step,
+)
 
 class Movable(Atom):
     _moving = False
@@ -27,8 +24,8 @@ class Movable(Atom):
         if self._moving:
             x, y = self.x, self.y
             pixel_step_size = 4
-            to_screen_x = x * world.icon_size
-            to_screen_y = (world.map.height - y) * world.icon_size
+            to_screen_x = x * si.world.icon_size
+            to_screen_y = (si.world.map.height - y) * si.world.icon_size
             if self._screen_x < to_screen_x:
                 self._screen_x += pixel_step_size
             elif self._screen_x > to_screen_x:
@@ -46,10 +43,10 @@ class Movable(Atom):
         if self._moving:
             return
 
-        key_up = internals.keyboard[K_UP]
-        key_down = internals.keyboard[K_DOWN]
-        key_right = internals.keyboard[K_RIGHT]
-        key_left = internals.keyboard[K_LEFT]
+        key_up = si.keyboard[K_UP]
+        key_down = si.keyboard[K_DOWN]
+        key_right = si.keyboard[K_RIGHT]
+        key_left = si.keyboard[K_LEFT]
 
         movements = (
             (key_up and not key_down, NORTH),
@@ -61,7 +58,7 @@ class Movable(Atom):
         for condition, direction in movements:
             if condition:
                 self.Move(
-                    location=internals.get_step(ref=self, direction=direction),
+                    location=get_step(ref=self, direction=direction),
                     direction=direction
                 )
                 break
@@ -104,7 +101,7 @@ class Movable(Atom):
             self.loc.Exited(self, location)
             location.Entered(self, self.loc)
 
-            world_map = world.map.fields
+            world_map = si.world.map.fields
             world_map[self.y][self.x].remove(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x, y
             self.x, self.y = location.x, location.y
             world_map[self.y][self.x].append(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x , y

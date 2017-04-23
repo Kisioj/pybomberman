@@ -2,7 +2,7 @@ from PyBYOND import *
 from PyBYOND import internals
 import random
 # import byteplay
-# import types
+# import base_types
 # byteplay.Code.from_code(obj.explode.im_func.func_code)
 # import inspect
 
@@ -26,16 +26,16 @@ class Box(Obj):
         self.exploded = True
         self.icon_state = "wall1_fired"
         # print '3'
-        # yield sleep(2)
+        # yield sleep(20)
         # print '2'
-        # yield sleep(2)
+        # yield sleep(20)
         # print '1'
-        # yield sleep(3)
+        # yield sleep(30)
 
-        yield sleep(4)
+        yield sleep(40)
         # self.density = False
         self.drop_powerup()
-        yield sleep(3)
+        yield sleep(30)
         delete(self)
 
     def drop_powerup(self):
@@ -73,7 +73,7 @@ class Explosion(Obj):
             icon_state = 'NSEW'
         self.icon_state = icon_state
         print(self.id, self.x, self.y, self.icon_state, icon_state)
-        yield sleep(4)
+        yield sleep(40)
         delete(self)
 
 
@@ -99,7 +99,7 @@ class Bomb(Obj):
         super(Bomb, self).__init__(*args, **kwargs)
         self._icon.scale(32, 32)
         self.explosion_locations = Locations()
-        spawn(30, self.explode)   # opcjonalny 3ci argument dodac z parametrami
+        spawn(self.explode, delay=30)   # opcjonalny 3ci argument dodac z parametrami
 
     def explode(self, explosion_source=None):
         self.explosion_source = explosion_source

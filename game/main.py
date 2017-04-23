@@ -1,8 +1,8 @@
 # moze po prostu dac intrukcje, ze nalezy zrobic plik main.py gdzi beda importowane wszystkie moduly, ktore chcemy zeby sie wykonaly
 
 from PyBYOND import *
-import mappable  # bez tej linijki wywali, moze by trzeba bylo zrobic jakies manage.py do uruchamiania, zeby moduly nie musialy sie importowac?
-from PyBYOND import internals, world
+# from PyBYOND import world
+from game import mappable
 
 
 class Player(Mob):

@@ -3,12 +3,19 @@ from PIL import Image
 
 import pygame
 
-from ...internals import (
-    icon_key_types,
-    icons,
-)
-
 from .icon_state import IconState
+from PyBYOND import singletons as si
+
+
+icon_key_types = {
+    'width': int,
+    'height': int,
+    'state': str,
+    'dirs': int,
+    'frames': int,
+    'delay': lambda delay: [int(x) for x in delay.split(',')],  # delay in 1/10s
+    'loop': int,
+}
 
 
 class Icon:
@@ -81,9 +88,9 @@ class Icon:
 class IconDescriptor(object):
     def __set__(self, src, filename):
         # print 'src', src, 'filename', filename
-        if filename not in icons:
-            icons[filename] = Icon(filename)
-        src._icon = icons[filename]
+        if filename not in si.icons:
+            si.icons[filename] = Icon(filename)
+        src._icon = si.icons[filename]
         src._icon_state = src._icon.icon_states.get(src.icon_state, '')
 
     def __get__(self, src, cls):

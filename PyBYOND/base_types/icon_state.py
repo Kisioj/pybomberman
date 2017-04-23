@@ -1,5 +1,5 @@
 import time
-from ... import constants
+from PyBYOND import constants
 
 
 class IconState:

@@ -1,5 +1,5 @@
-from .hidden.movable import Movable
-from ..constants import MOB_LAYER
+from PyBYOND.base_types.mappable.movable._movable import Movable
+from PyBYOND.constants import MOB_LAYER
 
 
 class Mob(Movable):

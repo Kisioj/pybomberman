@@ -1,17 +1,13 @@
-import os
 import sys
 import time
 
-import pygame
+from .icon_state import IconStateDescriptor
+from .mappable_meta import MappableMeta
 
-from .. import constants
-from .. import internals
-from ..internals import world
-
-from .hidden.icon import IconDescriptor
-from .hidden.icon_state import IconStateDescriptor
-from .hidden.mappable_meta import MappableMeta
-
+from PyBYOND import constants
+from PyBYOND.base_types.icon import IconDescriptor
+from PyBYOND import base_types
+from PyBYOND import singletons as si
 
 DIR_TO_DIR_INDEX_MAP = {
     constants.SOUTH: constants.SOUTH_INDEX,
@@ -28,6 +24,7 @@ class Atom(metaclass=MappableMeta):
     icon_state = IconStateDescriptor()
     x = 0
     y = 0
+    z = 0
     density = False
 
     layer = 0
@@ -62,22 +59,22 @@ class Atom(metaclass=MappableMeta):
             self.x = x
         if y is not None:
             self.y = y
-        self._screen_x = self.x * world.icon_size
-        self._screen_y = (world.map.height - self.y) * world.icon_size
-        world.map.fields[self.y][self.x].append(self)
+        self._screen_x = self.x * si.world.icon_size
+        self._screen_y = (si.world.map.height - self.y) * si.world.icon_size
+        si.world.map.fields[self.y][self.x].append(self)
 
         self.dots = 1
 
     def __remove__(self):
-        if self not in world.map.fields[self.y][self.x]:
-            print(self, self.x, self.y, world.map.fields[self.y][self.x])
-        assert self in world.map.fields[self.y][self.x]
-        world.map.fields[self.y][self.x].remove(self)
+        if self not in si.world.map.fields[self.y][self.x]:
+            print(self, self.x, self.y, si.world.map.fields[self.y][self.x])
+        assert self in si.world.map.fields[self.y][self.x]
+        si.world.map.fields[self.y][self.x].remove(self)
         self._deleted = True
 
     @property
     def loc(self):
-        return world.map.locate(self.x, self.y)
+        return base_types.Location(self.x, self.y, self.z)
 
     def draw(self):
         if self.icon:
@@ -101,7 +98,7 @@ class Atom(metaclass=MappableMeta):
             if is_animation_on:
                 if icon_state.attr_loop != constants.INFINITE and self._loop_no >= icon_state.attr_loop:
                     return
-                now_time = world.time
+                now_time = si.world.time
                 self._time_diff += now_time - self._last_time
                 last_time_diff = self._time_diff
                 self._last_time = now_time
@@ -125,12 +122,12 @@ class Atom(metaclass=MappableMeta):
                          self._loop_no += 1
 
                 if movement_animation and changed_frame:
-                     print('frame: {}, time_diff: {}, world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds))
+                     print('frame: {}, time_diff: {}, si.world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds))
             else:
                 if movement_animation:
                     self._loop_no = 0
                     self._frame_no = 0
-                    self._last_time = world.time
+                    self._last_time = si.world.time
                     sys.stdout.write('\r' + ((self.dots // 100) + 1) * '.')
                     self.dots += 1
                     if self.dots >= 300:
@@ -142,7 +139,7 @@ class Atom(metaclass=MappableMeta):
             current_frame = self._icon_state.frames[self._dir_index][self._frame_no]
             rect = current_frame.get_rect()
 
-            internals.screen.blit(
+            si.screen.blit(
                 current_frame,
                 (
                     self._screen_x + self.pixel_x,
