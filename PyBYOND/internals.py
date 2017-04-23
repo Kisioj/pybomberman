@@ -12,20 +12,22 @@ from pygame.constants import (
     KEYUP,
     K_ESCAPE,
 )
+
+from .base_types.mappable.movable.mob import Mob
 from .base_types import world_map
 from .base_types.client import Client
 from .base_types.world import World
 from . import singletons as si
 
-from PyBYOND import api
+# from PyBYOND import api
 from .verb import verbs
 
 
 # si.client = Client()
 # si.world = World()
 # world_map.world = world
-SCREEN_WIDTH, SCREEN_HEIGHT = 400*2, 368*2
-si.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+# SCREEN_WIDTH, SCREEN_HEIGHT = 400*2, 368*2
+
 si.keyboard = {
     K_LEFT: False,
     K_RIGHT: False,
@@ -50,6 +52,23 @@ si.client = Client()
 
 
 class PyBYOND(object):
+    def update_viewport(self):
+        view = si.world.view
+        if isinstance(view, str):
+            view_width, view_height = map(int, view.split('x'))
+        elif isinstance(view, int):
+            view = view * 2 + 1
+            view_width, view_height = view, view
+        else:
+            raise TypeError('ERROR')
+
+        icon_size = si.world.icon_size
+        map_width = si.world.map.width
+        map_height = si.world.map.height
+
+        SCREEN_WIDTH, SCREEN_HEIGHT = (min(view_width, map_width) * icon_size), (min(view_height, map_height) * icon_size)
+        si.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+
     def run(self):
         def spawned_function_time(spawned_function):
             run_time, function = spawned_function
@@ -58,7 +77,8 @@ class PyBYOND(object):
         print('verbs', verbs.items())
         world_map.WorldMap(si.world, 'map.ini')
 
-        player = si.world.mob()
+        mob_class = si.world.mob or Mob
+        player = mob_class()
         player.client = si.client
         si.client.mob = player
 
@@ -68,6 +88,9 @@ class PyBYOND(object):
         pygame.font.init()
         fpsClock = pygame.time.Clock()
         pygame.display.set_caption('PyBomberman')
+
+        self.update_viewport()
+
 
         while True:
             now_time = time.time()

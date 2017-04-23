@@ -62,6 +62,7 @@ def kick_bomb(usr):
         usr.client.play('resources/kick.wav')
 
 world.mob = Player
+world.view = 20
 client.controls[K_LCTRL] = drop_bomb
 client.controls[K_RCTRL] = kick_bomb
 pyBYOND.run()

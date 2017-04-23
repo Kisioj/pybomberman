@@ -61,6 +61,7 @@ class Movable(Atom):
                     location=get_step(ref=self, direction=direction),
                     direction=direction
                 )
+                print('MOVED {} {}'.format(self.x, self.y))
                 break
 
         # if key_up and not key_down:

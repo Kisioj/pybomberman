@@ -14,7 +14,20 @@ class Water(Turf):
 
 
 class Wall(Turf):
+    icon_state = "wall"
     density = True
+
+
+class Player(Mob):
+    icon = 'resources/turfs.png'
+    icon_state = "arrow"
+    x, y = 1, 1
+
+
+world.mob = Player
 
 if __name__ == '__main__':
     pyBYOND.run()
+
+# Mob.icon = 'resources/turfs.png'
+# Mob.icon_state = "arrow"
