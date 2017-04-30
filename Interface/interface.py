@@ -156,7 +156,7 @@ def main():
 
 
 
-    result = TEMPLATE.format(ui_windows[0].to_qt5())
+    result = TEMPLATE.format(ui_windows[0].generate_code())
     with open('pyqt5.py', 'w') as f:
         f.write(result)
     print(result)
