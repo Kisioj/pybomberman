@@ -1,7 +1,7 @@
 import time
 import types
 
-from . import base_types
+
 from . import constants
 from . import singletons as si
 """
@@ -31,10 +31,12 @@ def get_step(ref, direction: int, dist: int = 1):
     if direction & constants.EAST:
         x += dist
 
+    from . import base_types
     return base_types.Location(x, y, z)
 
 
 def locate(*args, **kwargs):
+    from . import base_types
     """
     Format:
         locate(prototype, container=world)

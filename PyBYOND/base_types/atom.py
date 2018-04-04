@@ -6,7 +6,6 @@ from .mappable_meta import MappableMeta
 
 from PyBYOND import constants
 from PyBYOND.base_types.icon import IconDescriptor
-from PyBYOND import base_types
 from PyBYOND import singletons as si
 
 DIR_TO_DIR_INDEX_MAP = {
@@ -74,6 +73,7 @@ class Atom(metaclass=MappableMeta):
 
     @property
     def loc(self):
+        from PyBYOND import base_types  # FIXME circular import
         return base_types.Location(self.x, self.y, self.z)
 
     def draw(self):

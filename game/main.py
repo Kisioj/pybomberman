@@ -1,6 +1,7 @@
 # moze po prostu dac intrukcje, ze nalezy zrobic plik main.py gdzi beda importowane wszystkie moduly, ktore chcemy zeby sie wykonaly
 
 from PyBYOND import *
+# from PyBYOND import *
 # from PyBYOND import world
 from game import mappable
 
@@ -84,3 +85,4 @@ pyBYOND.run()
 # PER PIXEL CLICK
 # NOWY FORMAT MAPKI GDZIE JEST DUZO MAPEK w 1 PLIKU
 # ZEBY BONUSY MIALY JAKIS EFEKT (w tym SPEED)
+# ZEBY BYL TYLKO 1 INIT DLA AREA

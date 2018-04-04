@@ -1,5 +1,7 @@
-syntax: glob
 *.pyc
-__pycache__/*
+__pycache__/
+.idea/
+*~
+*.orig
 *.xml
 *.iml
