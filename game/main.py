@@ -13,6 +13,10 @@ class Player(Mob):
     x, y = 12, 11     # x, y i z tez zrobic jako deskryptory najlepiej i jezeli np  ustawisz x na 0 to wszystko idzie na 0
     range = 3
 
+    def __init__(self):
+        super().__init__()
+        self.can_move = False
+
     def __login__(self):
         print(self, 'has logged in')
         self._icon.scale(64, 64)
@@ -33,12 +37,12 @@ class Player(Mob):
                 elif powerup.name == "speed":
                     pass
                 elif powerup.name == "range":
-                    pass
+                    self.range += 1
                 elif powerup.name == "kick":
                     pass
                 elif powerup.name == "throw":
                     pass
-                self.client.play('resources/powerup.wav')
+                self.client.play('resources/sound/powerup.wav')
                 delete(powerup)
 
 
@@ -51,16 +55,14 @@ def drop_bomb(usr):
     bomb = mappable.Bomb(usr.x, usr.y)  # lepiej chyba loc=usr.loc lub loc=locate(usr.x, usr.y)
     bomb.range = usr.range
     bomb.owner = usr
-    usr.client.play('resources/drop.wav')
-
-def walk(*args, **kwargs):
-    pass
+    usr.client.play('resources/sound/drop.wav')
 
 @verb
 def kick_bomb(usr):
     for bomb in get_by_type(get_step(usr, usr.dir), BYONDtypes.Bomb):
-        walk(bomb, usr.dir, 1)
-        usr.client.play('resources/kick.wav')
+        walk(bomb, usr.dir)
+        usr.client.play('resources/sound/kick.wav')
+
 
 world.mob = Player
 world.view = 20
@@ -75,6 +77,9 @@ pyBYOND.run()
 # 3 odpalanie edytora mapy
 # 4 odpalanie edytora ikon
 
+
+# FIXME:
+# jeżeli mamy taką samą ikonę jak bomba to wtedy po postawieniu bomby zmieniaja nam sie ikony, pewnie przez icon cache
 
 # TODO:
 # KOPANIE BOMB  - implementacja Enter, Exit, Entered, Exited i Bump

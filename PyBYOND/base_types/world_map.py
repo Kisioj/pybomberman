@@ -49,10 +49,15 @@ class WorldMap:
                     WorldMap.types[atom_type](x=x, y=y)
 
     def __draw__(self):
+        to_draw = []
         for y in range(self.height):
             for x in range(self.width):
-                for atom in sorted(self.fields[y][x], key=lambda atom: atom.layer):
-                    atom.draw()
+                for atom in self.fields[y][x]:
+                    to_draw.append(atom)
+
+        to_draw.sort(key=lambda atom: atom.layer)
+        for atom in to_draw:
+            atom.draw()
 
     # def locate(self, x, y, z=1):  # probably should also give possibility to pass class Turf argument here, z
     #     return Location(x, y)

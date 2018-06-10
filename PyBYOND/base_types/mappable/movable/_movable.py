@@ -38,10 +38,14 @@ class Movable(Atom):
 
             if self._screen_x == to_screen_x and self._screen_y == to_screen_y:
                 self._moving = False
+                si.gliding.remove(self)
 
     def movement(self):
-        if self._moving:
-            return
+        if self in si.walking:
+            del si.walking[self]
+
+        # if self._moving:
+        #     return
 
         key_up = si.keyboard[K_UP]
         key_down = si.keyboard[K_DOWN]
@@ -107,6 +111,7 @@ class Movable(Atom):
             self.x, self.y = location.x, location.y
             world_map[self.y][self.x].append(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x , y
             self._moving = True
+            si.gliding.append(self)
 
     def Bump(self, obstacle):
         print(self, 'bumps into', obstacle)

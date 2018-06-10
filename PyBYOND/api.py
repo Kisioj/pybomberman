@@ -1,6 +1,6 @@
 import time
 import types
-
+from collections import namedtuple
 
 from . import constants
 from . import singletons as si
@@ -151,3 +151,21 @@ def get_dist(source, target):
 
 def delete(atom):
     atom.__remove__()
+
+
+def step(ref, direction: int):
+    ref.Move(location=get_step(ref, direction), direction=direction)
+
+
+class WalkParams:
+    def __init__(self, direction, lag, ticks_left):
+        self.direction = direction
+        self.lag = lag
+        self.ticks_left = ticks_left
+
+
+def walk(ref, direction, lag=0):
+    if direction:
+        si.walking[ref] = WalkParams(direction=direction, lag=lag, ticks_left=lag)
+    elif ref in si.walking:
+        del si.walking[ref]

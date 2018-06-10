@@ -127,7 +127,7 @@ class Bomb(Obj):
                 explosions.append(Explosion(loc.x, loc.y))
             for expl in explosions:
                 expl.start()
-            self.owner.client.play('resources/explosion.wav')
+            self.owner.client.play('resources/sound/explosion.wav')
         delete(self)
 
     def continue_explosion(self, direction, step_size):

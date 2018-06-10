@@ -33,6 +33,8 @@ from .api import (
     delete,
     get_dist,
     get_by_type,
+    step,
+    walk,
 )
 
 from .internals import (

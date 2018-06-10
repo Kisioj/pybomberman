@@ -13,6 +13,7 @@ from pygame.constants import (
     K_ESCAPE,
 )
 
+from PyBYOND import step
 from .base_types.mappable.movable.mob import Mob
 from .base_types import world_map
 from .base_types.client import Client
@@ -112,9 +113,17 @@ class PyBYOND(object):
                 else:
                     break
 
-            player.moving()
+            for movable in si.gliding:
+                movable.moving()
+
             player.movement()
             si.world.map.__draw__()
+            for movable, walk_params in si.walking.items():
+                if walk_params.ticks_left > 0:
+                    walk_params.ticks_left -= 1
+                else:
+                    walk_params.ticks_left = walk_params.lag
+                    step(movable, walk_params.direction)
 
             player.draw()
             for event in pygame.event.get():

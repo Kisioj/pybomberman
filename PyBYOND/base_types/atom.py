@@ -70,6 +70,8 @@ class Atom(metaclass=MappableMeta):
         assert self in si.world.map.fields[self.y][self.x]
         si.world.map.fields[self.y][self.x].remove(self)
         self._deleted = True
+        if self in si.walking:
+            del si.walking[self]
 
     @property
     def loc(self):
@@ -136,8 +138,13 @@ class Atom(metaclass=MappableMeta):
 
     def render(self):
         if self.icon:
-            current_frame = self._icon_state.frames[self._dir_index][self._frame_no]
+
+            dir_index = self._dir_index if self._dir_index < self._icon_state.attr_dirs else 0
+            current_frame = self._icon_state.frames[dir_index][self._frame_no]
             rect = current_frame.get_rect()
+
+            if self.name == "bomb":
+                print(current_frame,  self._screen_x + self.pixel_x, self._screen_y + self.pixel_y - rect.height)
 
             si.screen.blit(
                 current_frame,
