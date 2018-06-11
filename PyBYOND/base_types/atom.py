@@ -37,7 +37,7 @@ class Atom(metaclass=MappableMeta):
     _time_diff = 0
     _deleted = False
 
-    _moving = False  # atoms cannot move but need this object for icon with movable states
+    _is_gliding = False  # atoms cannot move but need this object for icon with movable states
 
     def __repr__(self):
         return 'the {}'.format(self.__class__.__name__.lower())
@@ -95,7 +95,7 @@ class Atom(metaclass=MappableMeta):
         if frames_count > 1:
             is_animation_on = True
             movement_animation = icon_state.attr_movement
-            if movement_animation and not self._moving:
+            if movement_animation and not self._is_gliding:
                 is_animation_on = False
             if is_animation_on:
                 if icon_state.attr_loop != constants.INFINITE and self._loop_no >= icon_state.attr_loop:

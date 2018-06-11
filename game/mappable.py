@@ -94,6 +94,7 @@ class Bomb(Obj):
     explosion_source = None
     exploded = False
     range = 1
+    glide_size = 4
 
     def __init__(self, *args, **kwargs):
         super(Bomb, self).__init__(*args, **kwargs)

@@ -17,35 +17,34 @@ from PyBYOND.api import (
     get_step,
 )
 
-class Movable(Atom):
-    _moving = False
 
-    def moving(self):
-        if self._moving:
+class Movable(Atom):
+    _is_gliding = False
+    glide_size = 4
+
+    def glide(self):
+        if self._is_gliding:
             x, y = self.x, self.y
-            pixel_step_size = 4
+            glide_size = self.glide_size
             to_screen_x = x * si.world.icon_size
             to_screen_y = (si.world.map.height - y) * si.world.icon_size
             if self._screen_x < to_screen_x:
-                self._screen_x += pixel_step_size
+                self._screen_x += glide_size
             elif self._screen_x > to_screen_x:
-                self._screen_x -= pixel_step_size
+                self._screen_x -= glide_size
 
             if self._screen_y < to_screen_y:
-                self._screen_y += pixel_step_size
+                self._screen_y += glide_size
             elif self._screen_y > to_screen_y:
-                self._screen_y -= pixel_step_size
+                self._screen_y -= glide_size
 
             if self._screen_x == to_screen_x and self._screen_y == to_screen_y:
-                self._moving = False
+                self._is_gliding = False
                 si.gliding.remove(self)
 
-    def movement(self):
+    def handle_keyboard(self):
         if self in si.walking:
             del si.walking[self]
-
-        # if self._moving:
-        #     return
 
         key_up = si.keyboard[K_UP]
         key_down = si.keyboard[K_DOWN]
@@ -68,25 +67,6 @@ class Movable(Atom):
                 print('MOVED {} {}'.format(self.x, self.y))
                 break
 
-        # if key_up and not key_down:
-        #     direction = NORTH
-        #     location = internals.get_step(ref=self, direction=direction)
-        #     self.move(location=location, direction=direction)
-        #
-        # elif key_down and not key_up:
-        #     direction = SOUTH
-        #     location = internals.get_step(ref=self, direction=direction)
-        #     self.move(location=location, direction=direction)
-        #
-        # elif key_left and not key_right:
-        #     direction = WEST
-        #     location = internals.get_step(ref=self, direction=direction)
-        #     self.move(location=location, direction=direction)
-        #
-        # elif key_right and not key_left:
-        #     direction = EAST
-        #     location = internals.get_step(ref=self, direction=direction)
-        #     self.move(location=location, direction=direction)
 
     def Move(self, location, direction):
         self.dir = direction
@@ -108,9 +88,15 @@ class Movable(Atom):
 
             world_map = si.world.map.fields
             world_map[self.y][self.x].remove(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x, y
+
+            if self._is_gliding:
+                si.gliding.remove(self)
+                self._screen_x = self.x * si.world.icon_size
+                self._screen_y = (si.world.map.height - self.y) * si.world.icon_size
+
             self.x, self.y = location.x, location.y
             world_map[self.y][self.x].append(self) ## jakos to inaczej zrobic, zby to sie w setterze robilo samo x , y
-            self._moving = True
+            self._is_gliding = True
             si.gliding.append(self)
 
     def Bump(self, obstacle):

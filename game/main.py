@@ -15,7 +15,7 @@ class Player(Mob):
 
     def __init__(self):
         super().__init__()
-        self.can_move = False
+        self.can_move = True
 
     def __login__(self):
         print(self, 'has logged in')
@@ -27,6 +27,20 @@ class Player(Mob):
         print(self, 'has logged out')
 
     def Move(self, *args, **kwargs):
+        print(__class__)
+        def set_can_move():
+            self.can_move = True
+
+        if not self.can_move:
+            return
+
+        if self._is_gliding:
+            return
+
+        # self.can_move = False
+        # time = 1 / 30 * (32 / 4) * 10
+        # spawn(set_can_move, time)
+
         x, y = self.x, self.y
         super(Player, self).Move(*args, **kwargs)
         if (self.x, self.y) != (x, y):
@@ -79,6 +93,7 @@ pyBYOND.run()
 
 
 # FIXME:
+# gliding_size nie powinine zmieniac szybkosc kopnietej bomby, a kopnieta bomba powinna miec ten efekt wyhamowania 
 # jeżeli mamy taką samą ikonę jak bomba to wtedy po postawieniu bomby zmieniaja nam sie ikony, pewnie przez icon cache
 
 # TODO:

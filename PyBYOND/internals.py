@@ -114,9 +114,9 @@ class PyBYOND(object):
                     break
 
             for movable in si.gliding:
-                movable.moving()
+                movable.glide()
 
-            player.movement()
+            player.handle_keyboard()
             si.world.map.__draw__()
             for movable, walk_params in si.walking.items():
                 if walk_params.ticks_left > 0:
