@@ -231,7 +231,7 @@ class Window(Main):
                 self.add_code_line('self.{} = QtWidgets.QMenu(self.menuBar)'.format(category_id), method=False)
                 self.add_code_line('self.{0}.setObjectName("{0}")'.format(category_id), method=False)
                 for element in category.elements:
-                    print(element)
+                    logging.info(element)
                     if isinstance(element, menu.Separator):
                         self.add_code_line('self.{}.addSeparator()'.format(category_id), method=False)
                     elif isinstance(element, menu.Action):

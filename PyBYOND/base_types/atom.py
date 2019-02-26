@@ -1,3 +1,4 @@
+import logging
 import sys
 import time
 
@@ -66,7 +67,7 @@ class Atom(metaclass=MappableMeta):
 
     def __remove__(self):
         if self not in si.world.map.fields[self.y][self.x]:
-            print(self, self.x, self.y, si.world.map.fields[self.y][self.x])
+            logging.info(self, self.x, self.y, si.world.map.fields[self.y][self.x])
         assert self in si.world.map.fields[self.y][self.x]
         si.world.map.fields[self.y][self.x].remove(self)
         self._deleted = True
@@ -111,7 +112,7 @@ class Atom(metaclass=MappableMeta):
                 if self._time_diff > total_delay_in_seconds:
                     self._time_diff %= total_delay_in_seconds
                     self._loop_no += 1
-                    print('ROUGH')
+                    logging.info('ROUGH')
 
                 changed_frame = False
                 while self._time_diff > current_delay_in_seconds:
@@ -124,7 +125,7 @@ class Atom(metaclass=MappableMeta):
                          self._loop_no += 1
 
                 if movement_animation and changed_frame:
-                     print('frame: {}, time_diff: {}, si.world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds))
+                     logging.info('frame: {}, time_diff: {}, si.world.time: {}, delay_in_sec: {}, total_delay_in_sec: {}'.format(self._frame_no, last_time_diff, now_time, current_delay_in_seconds, total_delay_in_seconds))
             else:
                 if movement_animation:
                     self._loop_no = 0
@@ -144,28 +145,45 @@ class Atom(metaclass=MappableMeta):
             rect = current_frame.get_rect()
 
             if self.name == "bomb":
-                print(current_frame,  self._screen_x + self.pixel_x, self._screen_y + self.pixel_y - rect.height)
+                logging.info(current_frame,  self._screen_x + self.pixel_x, self._screen_y + self.pixel_y - rect.height)
+
+
+            eye = si.client.eye
+            # view = si.client.view or si.world.view
+            # if isinstance(view, int):
+            #     view_width = view_height = 1 + (view * 2)
+            # elif isinstance(view, str):
+            #     view_width, view_height = view.split('x')
+            #     view_width = int(view_width)
+            #     view_height = int(view_height)
+            #
+            # viewport_width = view_width * si.world.icon_size
+            # viewport_height = view_height * si.world.icon_size
+
+            # eye._screen_x, eye._screen_y
+            # viewport_width//2
+            # viewport_height//2
 
             si.screen.blit(
                 current_frame,
                 (
-                    self._screen_x + self.pixel_x,
-                    self._screen_y + self.pixel_y - rect.height
+                    self._screen_x - eye._screen_x + 208 + self.pixel_x,
+                    self._screen_y - eye._screen_y + 208 + self.pixel_y - rect.height
                 )
             )
 
     def Enter(self, movable, old_location):
-        print(self, "__Enter__")
+        logging.info(self, "__Enter__")
         return True
 
     def Entered(self, movable, old_location):
-        print(self, "__Entered__")
+        logging.info(self, "__Entered__")
         return True
 
     def Exit(self, movable, new_location):
-        print(self, "__Exit__")
+        logging.info(self, "__Exit__")
         return True
 
     def Exited(self, movable, new_location):
-        print(self, "__Exited__")
+        logging.info(self, "__Exited__")
         return True

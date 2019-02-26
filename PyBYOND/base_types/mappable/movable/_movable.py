@@ -1,8 +1,13 @@
+import logging
 from pygame.constants import (
     K_LEFT,
     K_RIGHT,
     K_UP,
     K_DOWN,
+    K_KP4,
+    K_KP6,
+    K_KP8,
+    K_KP2
 )
 
 from PyBYOND.base_types.atom import Atom
@@ -46,10 +51,10 @@ class Movable(Atom):
         if self in si.walking:
             del si.walking[self]
 
-        key_up = si.keyboard[K_UP]
-        key_down = si.keyboard[K_DOWN]
-        key_right = si.keyboard[K_RIGHT]
-        key_left = si.keyboard[K_LEFT]
+        key_up = si.keyboard[K_UP] or si.keyboard[K_KP8]
+        key_down = si.keyboard[K_DOWN] or si.keyboard[K_KP2]
+        key_right = si.keyboard[K_RIGHT] or si.keyboard[K_KP6]
+        key_left = si.keyboard[K_LEFT] or si.keyboard[K_KP4]
 
         movements = (
             (key_up and not key_down, NORTH),
@@ -64,7 +69,7 @@ class Movable(Atom):
                     location=get_step(ref=self, direction=direction),
                     direction=direction
                 )
-                print('MOVED {} {}'.format(self.x, self.y))
+                logging.info('MOVED {} {}'.format(self.x, self.y))
                 break
 
 
@@ -100,4 +105,4 @@ class Movable(Atom):
             si.gliding.append(self)
 
     def Bump(self, obstacle):
-        print(self, 'bumps into', obstacle)
+        logging.info(self, 'bumps into', obstacle)

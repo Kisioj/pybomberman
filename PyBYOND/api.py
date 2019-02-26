@@ -1,4 +1,5 @@
 import time
+import logging
 import types
 from collections import namedtuple
 
@@ -95,7 +96,7 @@ def sleepy(func):
                 seconds = next(result)
                 spawn(inner, seconds)
             except StopIteration:
-                print('STOP')
+                logging.info('STOP')
                 pass
         result = func(self, *args, **kwargs)
         if isinstance(result, types.GeneratorType):
@@ -125,7 +126,7 @@ def sleep(delay: float):
     Args:
         delay: The amount of time to sleep, in 1/10 seconds.
     """
-    print('sleep', delay*10, 'seconds')
+    logging.info('sleep', delay*10, 'seconds')
     return delay/10.0
 
 

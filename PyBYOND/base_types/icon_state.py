@@ -1,3 +1,4 @@
+import logging
 import time
 from PyBYOND import constants
 
@@ -11,7 +12,7 @@ class IconState:
         self._frames_count = kwargs.get('frames', 1)
         self.attr_dirs = kwargs.get('dirs', 1)
         self.attr_loop = kwargs.get('loop', constants.INFINITE)  # -1 = infinite, how many times loop through animation TODO
-        print('attr_loop', self.attr_loop)
+        logging.info('attr_loop', self.attr_loop)
         self.attr_rewind = kwargs.get('rewind', False)  # TODO
         self.delay = kwargs.get('delay', [])
         self.total_delay = sum(self.delay)

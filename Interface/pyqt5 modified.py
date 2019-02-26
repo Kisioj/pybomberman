@@ -62,9 +62,9 @@ class BYONDWidget:
                 height = y2 - y
 
             self.setGeometry(QtCore.QRect(x, y, width, height))
-            print("QPushButton.windowResizeEvent {}, {}".format(w_width, w_height))
+            logging.info("QPushButton.windowResizeEvent {}, {}".format(w_width, w_height))
         else:
-            print("INITIAL")
+            logging.info("INITIAL")
 
     def setBaseGeometry(self, *args):
         if len(args) == 1:
@@ -74,7 +74,7 @@ class BYONDWidget:
             x, y, width, height = args
         self.setBaseSize(width, height)
         self.setBasePos(x, y)
-        print("QPushButton.setBaseGeometry")
+        logging.info("QPushButton.setBaseGeometry")
         self.setGeometry(*args)
 
     def basePos(self):
@@ -90,12 +90,12 @@ class QMainWindow(QtWidgets.QMainWindow):
     def resizeEvent(self, QResizeEvent):
         super().resizeEvent(QResizeEvent)
         self.resized.emit(QResizeEvent)
-        print("QMainWindow.resizeEvent")
+        logging.info("QMainWindow.resizeEvent")
 
     def setBaseSize(self, *args):
         super().setBaseSize(*args)
         self.resize(*args)
-        print("QMainWindow.setBaseSize")
+        logging.info("QMainWindow.setBaseSize")
 
 
 class PushButton(QtWidgets.QPushButton, BYONDWidget):

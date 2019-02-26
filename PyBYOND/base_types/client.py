@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 from PyBYOND import (
@@ -14,6 +15,9 @@ class Client(object):
     def __init__(self):
         self.mob = None
         self.controls = {}
+        self.eye = None
+        self.view = None
+
 
     def __keydown__(self, key):
         # print 'Client.__kedown__', key, verbs.items()
@@ -27,7 +31,7 @@ class Client(object):
         if filename not in sounds:
             sounds[filename] = pygame.mixer.Sound(filename)
         sounds[filename].play()
-        print(filename, 'plays')
+        logging.info(filename, 'plays')
 
     def __north__(self):
         self.mob.Move(loc=api.get_step(self.mob, constants.NORTH), direction=constants.NORTH)

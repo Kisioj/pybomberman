@@ -37,21 +37,21 @@ class WikipediaPathfinder:
                 break
 
         chain.reverse()
-        print('Run time: {:.2f}s'.format(run_time))
-        print('Shortest path:', chain)
+        logging.info('Run time: {:.2f}s'.format(run_time))
+        logging.info('Shortest path:', chain)
 
     def search_on_next_page(self):
         self.request_id += 1
         word = self.queue.popleft()
-        print(len(self.history), self.request_id, word)
+        logging.info(len(self.history), self.request_id, word)
         before = time.time()
         r = requests.get(url='https://en.wikipedia.org/wiki/{}'.format(word))
         start = time.time()
 
         # pattern = re.compile(r'href="/wiki/([^:#"]+)"')
         # links = (parse.unquote_plus(href) for href in pattern.findall(r.text))
-        # # print('\n'.join(links))
-        # # print(len(links))
+        # # logging.info('\n'.join(links))
+        # # logging.info(len(links))
         # for href in links:
         #     if href not in self.history:
         #         self.history[href] = word
@@ -62,16 +62,16 @@ class WikipediaPathfinder:
         soup = BeautifulSoup(markup=r.text, features='html.parser')
         # links = soup.find_all(name='a')
         #
-        # print(len(links))
+        # logging.info(len(links))
         # hrefs = (link.get('href') for link in links)
         # links = [
         #     parse.unquote_plus(href)[6:]
         #     for href in hrefs
         #     if href and href.startswith('/wiki/') and ':' not in href and '#' not in href
         # ]
-        # print('\n'.join(links))
-        # print(len(links))
-        # print(len(set(links)))
+        # logging.info('\n'.join(links))
+        # logging.info(len(links))
+        # logging.info(len(set(links)))
 
 
         for link in soup.find_all(name='a'):
@@ -86,8 +86,8 @@ class WikipediaPathfinder:
         end = time.time()
         req_time = start - before
         run_time = end - start
-        print('request: {:.2f}s, code: request: {:.2f}s'.format(req_time, run_time))
-        # print('code: {:.2f}s'.format(run_time))
+        logging.info('request: {:.2f}s, code: request: {:.2f}s'.format(req_time, run_time))
+        # logging.info('code: {:.2f}s'.format(run_time))
 
 # Comparison_of_Linux_distributions
 def main(start_word='Brainfuck', end_word='Scanline_rendering'):

@@ -133,7 +133,7 @@ def main():
 
     ui_windows = []
     for window in parser.windows:
-        # print()
+        # logging.info()
         control = window['elements'][0]
         container = TYPES_MAP[control['type']](control)
         if container.menu:
@@ -142,24 +142,24 @@ def main():
                     container.menu = ui_menu
 
         ui_windows.append(container)
-        # print(container)
+        # logging.info(container)
         for control in window['elements'][1:]:
             element = TYPES_MAP[control['type']](control)
             container.children.append(element)
-            # print('\t{}'.format(element))
+            # logging.info('\t{}'.format(element))
 
     # for ui_window in ui_windows:
-    #     print()
-    #     print(ui_window)
+    #     logging.info()
+    #     logging.info(ui_window)
     #     for element in ui_window.children:
-    #         print('\t{}'.format(element))
+    #         logging.info('\t{}'.format(element))
 
 
 
     result = TEMPLATE.format(ui_windows[0].generate_code())
     with open('pyqt5.py', 'w') as f:
         f.write(result)
-    print(result)
+    logging.info(result)
 
 if __name__ == '__main__':
     main()

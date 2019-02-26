@@ -30,7 +30,7 @@ class Bar:
             else:
                 menu_element = Action(element)
             category.elements.append(menu_element)
-            # print(menu_element)
+            # logging.info(menu_element)
 
 
 class Category:

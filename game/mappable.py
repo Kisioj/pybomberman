@@ -1,3 +1,4 @@
+import logging
 from PyBYOND import *
 from PyBYOND import internals
 import random
@@ -72,7 +73,7 @@ class Explosion(Obj):
         if not icon_state:
             icon_state = 'NSEW'
         self.icon_state = icon_state
-        print(self.id, self.x, self.y, self.icon_state, icon_state)
+        logging.info(self.id, self.x, self.y, self.icon_state, icon_state)
         yield sleep(40)
         delete(self)
 
@@ -108,14 +109,14 @@ class Bomb(Obj):
         self.exploded = True
         if self.explosion_source is None:
             self.explosion_locations.append(self.loc)
-            print(self, 'explodes')
+            logging.info(self, 'explodes')
         else:
-            print(self, 'chain explodes from', self.explosion_source)
+            logging.info(self, 'chain explodes from', self.explosion_source)
 
         for obj in self.loc:
             if isinstance(obj, BYONDtypes.Mob):
-                print(obj, 'got hurt')
-        print('self.range', self.range)
+                logging.info(obj, 'got hurt')
+        logging.info('self.range', self.range)
 
         for direction in directions:
             for step_size in range(1, self.range + 1):

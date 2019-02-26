@@ -1,3 +1,4 @@
+import logging
 import sys
 import time
 
@@ -11,6 +12,10 @@ from pygame.constants import (
     KEYDOWN,
     KEYUP,
     K_ESCAPE,
+    K_KP2,
+    K_KP8,
+    K_KP4,
+    K_KP6,
 )
 
 from PyBYOND import step
@@ -33,7 +38,11 @@ si.keyboard = {
     K_LEFT: False,
     K_RIGHT: False,
     K_UP: False,
-    K_DOWN: False
+    K_DOWN: False,
+    K_KP4: False,
+    K_KP6: False,
+    K_KP8: False,
+    K_KP2: False,
 }
 
 
@@ -75,13 +84,14 @@ class PyBYOND(object):
             run_time, function = spawned_function
             return run_time
 
-        print('verbs', verbs.items())
+        logging.info('verbs', verbs.items())
         world_map.WorldMap(si.world, 'map.ini')
 
         mob_class = si.world.mob or Mob
         player = mob_class()
         player.client = si.client
         si.client.mob = player
+        si.client.eye = player
 
         player.__login__()
 
@@ -117,7 +127,8 @@ class PyBYOND(object):
                 movable.glide()
 
             player.handle_keyboard()
-            si.world.map.__draw__()
+            si.screen.fill((0, 0, 0))
+            si.world.map.__draw__(si.world, si.client)
             for movable, walk_params in si.walking.items():
                 if walk_params.ticks_left > 0:
                     walk_params.ticks_left -= 1
